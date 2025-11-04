@@ -12,19 +12,23 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Hophop">
         <activity
-            android:name=".Ranking"
-            android:exported="false" />
-        <activity
-            android:name=".Fin"
+            android:name=".Reiniciar"
             android:exported="false" />
         <activity
             android:name=".Juego"
             android:exported="false" />
         <activity
-            android:name=".CuentaRegresiva"
+            android:name=".Cuenta_Regresiva"
             android:exported="false" />
         <activity
             android:name=".Normas"
+            android:exported="false" />
+        <activity
+            android:name=".ui.login.prueba"
+            android:exported="false"
+            android:label="@string/title_activity_prueba" />
+        <activity
+            android:name=".Inicio_mensaje"
             android:exported="false" />
         <activity
             android:name=".Eleccion"
@@ -34,6 +38,15 @@
             android:exported="false" />
         <activity
             android:name=".Login"
+            android:exported="false" />
+        <activity
+            android:name=".Ranking"
+            android:exported="false" />
+        <activity
+            android:name=".Fin"
+            android:exported="false" />
+        <activity
+            android:name=".CuentaRegresiva"
             android:exported="false" />
         <activity
             android:name=".Inicio"
