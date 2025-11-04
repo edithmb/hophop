@@ -1,0 +1,345 @@
+Index: app/src/main/java/com/example/hophop/Bienvenida.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/hophop/Bienvenida.kt b/app/src/main/java/com/example/hophop/Bienvenida.kt
+new file mode 100644
+--- /dev/null	(date 1762273013709)
++++ b/app/src/main/java/com/example/hophop/Bienvenida.kt	(date 1762273013709)
+@@ -0,0 +1,14 @@
++package com.example.hophop
++
++import android.os.Bundle
++import androidx.activity.enableEdgeToEdge
++import androidx.appcompat.app.AppCompatActivity
++import androidx.core.view.ViewCompat
++import androidx.core.view.WindowInsetsCompat
++
++class Bienvenida : AppCompatActivity() {
++    override fun onCreate(savedInstanceState: Bundle?) {
++        super.onCreate(savedInstanceState)
++        setContentView(R.layout.activity_bienvenida)
++    }
++}
+\ No newline at end of file
+Index: app/src/main/res/layout/activity_bienvenida.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_bienvenida.xml b/app/src/main/res/layout/activity_bienvenida.xml
+new file mode 100644
+--- /dev/null	(date 1762273013659)
++++ b/app/src/main/res/layout/activity_bienvenida.xml	(date 1762273013659)
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="utf-8"?>
++<LinearLayout
++    xmlns:android="http://schemas.android.com/apk/res/android"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent">
++</LinearLayout>
+\ No newline at end of file
+Index: app/src/main/java/com/example/hophop/Login.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/hophop/Login.kt b/app/src/main/java/com/example/hophop/Login.kt
+new file mode 100644
+--- /dev/null	(date 1762273013620)
++++ b/app/src/main/java/com/example/hophop/Login.kt	(date 1762273013620)
+@@ -0,0 +1,14 @@
++package com.example.hophop
++
++import android.os.Bundle
++import androidx.activity.enableEdgeToEdge
++import androidx.appcompat.app.AppCompatActivity
++import androidx.core.view.ViewCompat
++import androidx.core.view.WindowInsetsCompat
++
++class Login : AppCompatActivity() {
++    override fun onCreate(savedInstanceState: Bundle?) {
++        super.onCreate(savedInstanceState)
++        setContentView(R.layout.activity_login)
++    }
++}
+\ No newline at end of file
+Index: app/src/main/res/layout/activity_login.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_login.xml b/app/src/main/res/layout/activity_login.xml
+new file mode 100644
+--- /dev/null	(date 1762273013649)
++++ b/app/src/main/res/layout/activity_login.xml	(date 1762273013649)
+@@ -0,0 +1,7 @@
++<?xml version="1.0" encoding="utf-8"?>
++<LinearLayout
++    xmlns:android="http://schemas.android.com/apk/res/android"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent">
++
++</LinearLayout>
+\ No newline at end of file
+Index: app/src/main/res/layout/activity_juego.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_juego.xml b/app/src/main/res/layout/activity_juego.xml
+new file mode 100644
+--- /dev/null	(date 1762273013681)
++++ b/app/src/main/res/layout/activity_juego.xml	(date 1762273013681)
+@@ -0,0 +1,7 @@
++<?xml version="1.0" encoding="utf-8"?>
++<LinearLayout
++    xmlns:android="http://schemas.android.com/apk/res/android"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent">
++
++</LinearLayout>
+\ No newline at end of file
+Index: app/src/main/java/com/example/hophop/CuentaRegresiva.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/hophop/CuentaRegresiva.kt b/app/src/main/java/com/example/hophop/CuentaRegresiva.kt
+new file mode 100644
+--- /dev/null	(date 1762273013641)
++++ b/app/src/main/java/com/example/hophop/CuentaRegresiva.kt	(date 1762273013641)
+@@ -0,0 +1,15 @@
++package com.example.hophop
++
++import android.os.Bundle
++import androidx.activity.enableEdgeToEdge
++import androidx.appcompat.app.AppCompatActivity
++import androidx.core.view.ViewCompat
++import androidx.core.view.WindowInsetsCompat
++
++class CuentaRegresiva : AppCompatActivity() {
++    override fun onCreate(savedInstanceState: Bundle?) {
++        super.onCreate(savedInstanceState)
++        setContentView(R.layout.activity_cuenta_regresiva)
++
++    }
++}
+\ No newline at end of file
+Index: app/src/main/res/layout/activity_cuenta_regresiva.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_cuenta_regresiva.xml b/app/src/main/res/layout/activity_cuenta_regresiva.xml
+new file mode 100644
+--- /dev/null	(date 1762273013628)
++++ b/app/src/main/res/layout/activity_cuenta_regresiva.xml	(date 1762273013628)
+@@ -0,0 +1,7 @@
++<?xml version="1.0" encoding="utf-8"?>
++<LinearLayout
++    xmlns:android="http://schemas.android.com/apk/res/android"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent">
++
++</LinearLayout>
+\ No newline at end of file
+Index: app/src/main/java/com/example/hophop/Normas.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/hophop/Normas.kt b/app/src/main/java/com/example/hophop/Normas.kt
+new file mode 100644
+--- /dev/null	(date 1762273013634)
++++ b/app/src/main/java/com/example/hophop/Normas.kt	(date 1762273013634)
+@@ -0,0 +1,15 @@
++package com.example.hophop
++
++import android.os.Bundle
++import androidx.activity.enableEdgeToEdge
++import androidx.appcompat.app.AppCompatActivity
++import androidx.core.view.ViewCompat
++import androidx.core.view.WindowInsetsCompat
++
++class Normas : AppCompatActivity() {
++    override fun onCreate(savedInstanceState: Bundle?) {
++        super.onCreate(savedInstanceState)
++        setContentView(R.layout.activity_normas)
++
++    }
++}
+\ No newline at end of file
+Index: app/src/main/res/layout/activity_normas.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_normas.xml b/app/src/main/res/layout/activity_normas.xml
+new file mode 100644
+--- /dev/null	(date 1762273013607)
++++ b/app/src/main/res/layout/activity_normas.xml	(date 1762273013607)
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="utf-8"?>
++<LinearLayout
++    xmlns:android="http://schemas.android.com/apk/res/android"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent">
++</LinearLayout>
+\ No newline at end of file
+Index: app/src/main/java/com/example/hophop/Eleccion.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/hophop/Eleccion.kt b/app/src/main/java/com/example/hophop/Eleccion.kt
+new file mode 100644
+--- /dev/null	(date 1762273013671)
++++ b/app/src/main/java/com/example/hophop/Eleccion.kt	(date 1762273013671)
+@@ -0,0 +1,14 @@
++package com.example.hophop
++
++import android.os.Bundle
++import androidx.activity.enableEdgeToEdge
++import androidx.appcompat.app.AppCompatActivity
++import androidx.core.view.ViewCompat
++import androidx.core.view.WindowInsetsCompat
++
++class Eleccion : AppCompatActivity() {
++    override fun onCreate(savedInstanceState: Bundle?) {
++        super.onCreate(savedInstanceState)
++        setContentView(R.layout.activity_eleccion)
++    }
++}
+\ No newline at end of file
+Index: app/src/main/res/layout/activity_eleccion.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_eleccion.xml b/app/src/main/res/layout/activity_eleccion.xml
+new file mode 100644
+--- /dev/null	(date 1762273013729)
++++ b/app/src/main/res/layout/activity_eleccion.xml	(date 1762273013729)
+@@ -0,0 +1,7 @@
++<?xml version="1.0" encoding="utf-8"?>
++<LinearLayout
++    xmlns:android="http://schemas.android.com/apk/res/android"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent">
++
++</LinearLayout>
+\ No newline at end of file
+Index: app/src/main/java/com/example/hophop/Ranking.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/hophop/Ranking.kt b/app/src/main/java/com/example/hophop/Ranking.kt
+new file mode 100644
+--- /dev/null	(date 1762273013665)
++++ b/app/src/main/java/com/example/hophop/Ranking.kt	(date 1762273013665)
+@@ -0,0 +1,15 @@
++package com.example.hophop
++
++import android.os.Bundle
++import androidx.activity.enableEdgeToEdge
++import androidx.appcompat.app.AppCompatActivity
++import androidx.core.view.ViewCompat
++import androidx.core.view.WindowInsetsCompat
++
++class Ranking : AppCompatActivity() {
++    override fun onCreate(savedInstanceState: Bundle?) {
++        super.onCreate(savedInstanceState)
++        setContentView(R.layout.activity_ranking)
++
++    }
++}
+\ No newline at end of file
+Index: app/src/main/res/layout/activity_ranking.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_ranking.xml b/app/src/main/res/layout/activity_ranking.xml
+new file mode 100644
+--- /dev/null	(date 1762273013702)
++++ b/app/src/main/res/layout/activity_ranking.xml	(date 1762273013702)
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="utf-8"?>
++<LinearLayout
++    xmlns:android="http://schemas.android.com/apk/res/android"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent">
++</LinearLayout>
+\ No newline at end of file
+Index: app/src/main/java/com/example/hophop/Fin.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/hophop/Fin.kt b/app/src/main/java/com/example/hophop/Fin.kt
+new file mode 100644
+--- /dev/null	(date 1762273013735)
++++ b/app/src/main/java/com/example/hophop/Fin.kt	(date 1762273013735)
+@@ -0,0 +1,15 @@
++package com.example.hophop
++
++import android.os.Bundle
++import androidx.activity.enableEdgeToEdge
++import androidx.appcompat.app.AppCompatActivity
++import androidx.core.view.ViewCompat
++import androidx.core.view.WindowInsetsCompat
++
++class Fin : AppCompatActivity() {
++    override fun onCreate(savedInstanceState: Bundle?) {
++        super.onCreate(savedInstanceState)
++        setContentView(R.layout.activity_fin)
++
++    }
++}
+\ No newline at end of file
+Index: app/src/main/res/layout/activity_fin.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/activity_fin.xml b/app/src/main/res/layout/activity_fin.xml
+new file mode 100644
+--- /dev/null	(date 1762273013690)
++++ b/app/src/main/res/layout/activity_fin.xml	(date 1762273013690)
+@@ -0,0 +1,7 @@
++<?xml version="1.0" encoding="utf-8"?>
++<LinearLayout
++    xmlns:android="http://schemas.android.com/apk/res/android"
++    android:layout_width="match_parent"
++    android:layout_height="match_parent">
++
++</LinearLayout>
+\ No newline at end of file
+Index: app/src/main/java/com/example/hophop/Juego.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/hophop/Juego.kt b/app/src/main/java/com/example/hophop/Juego.kt
+new file mode 100644
+--- /dev/null	(date 1762273013721)
++++ b/app/src/main/java/com/example/hophop/Juego.kt	(date 1762273013721)
+@@ -0,0 +1,14 @@
++package com.example.hophop
++
++import android.os.Bundle
++import androidx.activity.enableEdgeToEdge
++import androidx.appcompat.app.AppCompatActivity
++import androidx.core.view.ViewCompat
++import androidx.core.view.WindowInsetsCompat
++
++class Juego : AppCompatActivity() {
++    override fun onCreate(savedInstanceState: Bundle?) {
++        super.onCreate(savedInstanceState)
++        setContentView(R.layout.activity_juego)
++    }
++}
+\ No newline at end of file
