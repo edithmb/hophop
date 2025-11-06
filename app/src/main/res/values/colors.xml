@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!--Basic Colors-->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="LetraMarron">#A1572A</color>
+
+    <!--Buttons Colors-->
+    <color name="RojoPastel">#FF8484</color>
+    <color name="NaranjaPastel">#FFB384</color>
+    <color name="AmarilloPastel">#FFD374</color>
+    <color name="VerdeLlamativo">#B6D26B</color>
+
+    <!--Cartel Colors-->
+    <color name="MarronPastel">#F5D0B6</color>
+    <color name="SegundoMarronPaste">#F8E1D0</color>
+    <color name="ColorBorde">#C89D7F</color>
 </resources>
