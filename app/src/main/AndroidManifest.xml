@@ -13,44 +13,40 @@
         android:theme="@style/Theme.Hophop">
         <activity
             android:name=".Reiniciar"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="landscape"/>
         <activity
             android:name=".Juego"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="landscape"/>
         <activity
             android:name=".Cuenta_Regresiva"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="landscape"/>
         <activity
             android:name=".Normas"
-            android:exported="false" />
-        <activity
-            android:name=".ui.login.prueba"
             android:exported="false"
-            android:label="@string/title_activity_prueba" />
+            android:screenOrientation="landscape"/>
         <activity
             android:name=".Inicio_mensaje"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="landscape"/>
         <activity
             android:name=".Eleccion"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="landscape"/>
         <activity
             android:name=".Bienvenida"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="landscape"/>
         <activity
             android:name=".Login"
-            android:exported="false" />
-        <activity
-            android:name=".Ranking"
-            android:exported="false" />
-        <activity
-            android:name=".Fin"
-            android:exported="false" />
-        <activity
-            android:name=".CuentaRegresiva"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="landscape"/>
         <activity
             android:name=".Inicio"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
