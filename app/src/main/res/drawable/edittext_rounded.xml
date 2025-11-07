@@ -1,0 +1,10 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <!-- Fondo del textbox -->
+    <solid android:color="@color/white" />
+
+    <!-- Bordes redondeados -->
+    <corners android:radius="20dp" />
+
+</shape>
