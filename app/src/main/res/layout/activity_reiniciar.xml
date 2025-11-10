@@ -7,4 +7,64 @@
     android:layout_height="match_parent"
     tools:context=".Reiniciar">
 
+    <ImageView
+        android:id="@+id/imagenFondoL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/hop_hoop_juego"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:layout_width="1250dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:background="@color/MarronPastel"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="16dp"
+        android:weightSum="3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.266"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/profile_image"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:background="@drawable/circle_white"
+            android:src="@drawable/gato"
+            android:layout_marginEnd="450dp"/>
+
+        <TextView
+            android:layout_width="110dp"
+            android:layout_height="70dp"
+            android:background="@drawable/borde_textview"
+            android:text="Puntos \n0"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:textColor="@color/LetraMarron"
+            android:fontFamily="@font/patrickhandregular"
+            android:layout_marginEnd="300dp"
+        />
+
+        <Button
+            android:id="@+id/btnRegresar"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:elevation="30dp"
+            android:fontFamily="@font/patrickhandregular"
+            android:text="Regresar"
+            android:textAlignment="center"
+            android:textSize="30dp"
+            android:translationZ="10dp"
+            app:backgroundTint="@color/RojoPastel"
+            android:layout_marginEnd="16dp"/>
+    </LinearLayout>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
