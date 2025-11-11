@@ -20,23 +20,23 @@
             android:layout_width="57dp"
             android:layout_height="66dp"
             android:layout_marginEnd="392dp"
-            android:layout_marginBottom="212dp"
+            android:layout_marginBottom="244dp"
             android:src="@drawable/flor"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
         <TextView
-            android:id="@+id/tvTitulo"
+            android:id="@+id/txtBienvenida"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:layout_marginTop="20dp"
             android:fontFamily="@font/patrickhandregular"
             android:gravity="center"
-            android:text="¡Bienvenid@!"
             android:textColor="@color/white"
-            android:textSize="70sp"
+            android:textSize="50sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -58,7 +58,7 @@
         <ImageView
             android:layout_width="85dp"
             android:layout_height="66dp"
-            android:layout_marginBottom="164dp"
+            android:layout_marginBottom="8dp"
             android:src="@drawable/flor"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />

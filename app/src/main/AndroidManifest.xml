@@ -20,10 +20,6 @@
             android:exported="false"
             android:screenOrientation="landscape"/>
         <activity
-            android:name=".Cuenta_Regresiva"
-            android:exported="false"
-            android:screenOrientation="landscape"/>
-        <activity
             android:name=".Normas"
             android:exported="false"
             android:screenOrientation="landscape"/>
@@ -33,10 +29,6 @@
             android:screenOrientation="landscape"/>
         <activity
             android:name=".Eleccion"
-            android:exported="false"
-            android:screenOrientation="landscape"/>
-        <activity
-            android:name=".Bienvenida"
             android:exported="false"
             android:screenOrientation="landscape"/>
         <activity
