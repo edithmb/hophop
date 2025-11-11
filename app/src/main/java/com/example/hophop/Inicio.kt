@@ -1,7 +1,9 @@
 package com.example.hophop
 
+import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
+import android.view.Window
 import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +16,7 @@ class Inicio : AppCompatActivity() {
         setContentView(R.layout.activity_inicio)
 
         val btnEmpezar = findViewById<Button>(R.id.btnEmpezar)
+        val btnSalirI = findViewById<Button>(R.id.btnSalirI)
 
         btnEmpezar.setOnClickListener {
             val intent = Intent(this, Login::class.java)
@@ -21,5 +24,33 @@ class Inicio : AppCompatActivity() {
 
         }
 
+        btnSalirI.setOnClickListener {
+            mostrarMensajeSalir()
+        }
+
+
     }
+
+    private fun mostrarMensajeSalir(){
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(false)
+        dialog.setContentView(R.layout.mensaje_salir)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        val btnSalirSI = dialog.findViewById<Button>(R.id.btnSalirSI)
+        val btnSalirNO = dialog.findViewById<Button>(R.id.btnSalirNO)
+
+        btnSalirSI?.setOnClickListener {
+            dialog.dismiss()
+            finishAffinity()
+        }
+
+        btnSalirNO?.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
+
 }

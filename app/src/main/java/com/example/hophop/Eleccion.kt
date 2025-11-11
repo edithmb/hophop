@@ -5,6 +5,7 @@ import android.media.Image
 import android.os.Bundle
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -21,6 +22,7 @@ class Eleccion : AppCompatActivity() {
 
     private var seleccionActual: Int? = null
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_eleccion)
@@ -34,8 +36,15 @@ class Eleccion : AppCompatActivity() {
         imgKoala = findViewById(R.id.tarjetaKoala)
 
         btnContinuarEleccion.setOnClickListener {
-            val intent = Intent(this, Normas::class.java)
-            startActivity(intent)
+            if (seleccionActual != null){
+                val intent = Intent(this, Juego::class.java)
+
+                intent.putExtra("animalSeleccionado", seleccionActual)
+                startActivity(intent)
+            }
+            else {
+                Toast.makeText(this, "Selecciona un animal primero 🐾", Toast.LENGTH_SHORT).show()
+            }
         }
 
         imgConejo.setOnClickListener { seleccionarImg(R.id.tarjetaConejo) }
@@ -43,6 +52,7 @@ class Eleccion : AppCompatActivity() {
         imgDino.setOnClickListener { seleccionarImg(R.id.tarjetaDinosaurio) }
         imgGato.setOnClickListener { seleccionarImg(R.id.tarjetaGato) }
         imgKoala.setOnClickListener { seleccionarImg(R.id.tarjetaKoala) }
+
 
     }
 
@@ -64,4 +74,6 @@ class Eleccion : AppCompatActivity() {
 
         seleccionActual = idSeleccionado
     }
+
+
 }
