@@ -14,4 +14,112 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="228dp"
+        android:fontFamily="@font/chewyregular"
+        android:shadowColor="#97C7DD"
+        android:shadowDx="-10"
+        android:shadowDy="10"
+        android:shadowRadius="4"
+        android:text="HOP"
+        android:textColor="@color/white"
+        android:textSize="50dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.463"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="90dp"
+        android:layout_marginTop="226dp"
+        android:fontFamily="@font/chewyregular"
+        android:shadowColor="#97C7DD"
+        android:shadowDx="-10"
+        android:shadowDy="10"
+        android:shadowRadius="4"
+        android:text="HOP"
+        android:textColor="@color/white"
+        android:textSize="50dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/tarjetaConejo"
+        android:layout_width="200dp"
+        android:layout_height="250dp"
+        android:layout_marginTop="318dp"
+        android:src="@drawable/conejo_tarjeta"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.053"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/tarjetaZorro"
+        android:layout_width="250dp"
+        android:layout_height="300dp"
+        android:layout_marginTop="293dp"
+        android:src="@drawable/zorro_tarjeta"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.268"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/tarjetaDinosaurio"
+        android:layout_width="250dp"
+        android:layout_height="290dp"
+        android:layout_marginTop="290dp"
+        android:layout_marginLeft="270dp"
+        android:src="@drawable/dinosaurio_tarjeta"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.32"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/tarjetaGato"
+        android:layout_width="250dp"
+        android:layout_height="260dp"
+        android:layout_marginTop="308dp"
+        android:layout_marginLeft="630dp"
+        android:src="@drawable/gato_tarjeta"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.32"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/tarjetaKoala"
+        android:layout_width="250dp"
+        android:layout_height="233dp"
+        android:layout_marginTop="319dp"
+        android:layout_marginLeft="985dp"
+        android:src="@drawable/koala_tarjeta"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.32"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnContinuarE"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="570dp"
+        android:fontFamily="@font/patrickhandregular"
+        android:text="Continuar"
+        android:textSize="45sp"
+        android:textAlignment="center"
+        android:elevation="30dp"
+        android:translationZ="10dp"
+        app:backgroundTint="@color/RojoPastel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
