@@ -28,6 +28,7 @@ class Eleccion : AppCompatActivity() {
         setContentView(R.layout.activity_eleccion)
 
         val btnContinuarEleccion = findViewById<Button>(R.id.btnContinuarE)
+        val imageviewregresarlogin2 = findViewById<ImageView>(R.id.regresaralogin2)
 
         imgConejo = findViewById(R.id.tarjetaConejo)
         imgZorro = findViewById(R.id.tarjetaZorro)
@@ -45,6 +46,11 @@ class Eleccion : AppCompatActivity() {
             else {
                 Toast.makeText(this, "Selecciona un animal primero 🐾", Toast.LENGTH_SHORT).show()
             }
+        }
+
+        imageviewregresarlogin2.setOnClickListener {
+            val intent = Intent(this, Loginpart2::class.java)
+            startActivity(intent)
         }
 
         imgConejo.setOnClickListener { seleccionarImg(R.id.tarjetaConejo) }
