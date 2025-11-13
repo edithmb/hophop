@@ -24,16 +24,16 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="272dp"
+        android:layout_marginTop="256dp"
         android:fontFamily="@font/fredokabold"
-        android:text="¿Seguro que deseas salir?"
+        android:text="¿Seguro que deseas \n abandonar la partida ?"
+        android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="45sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.518"
+        app:layout_constraintHorizontal_bias="0.516"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
 
     <ImageView
         android:layout_width="wrap_content"
@@ -47,7 +47,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/btnSalirSIA"
+        android:id="@+id/btnSalirSIJ"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="384dp"
@@ -59,7 +59,7 @@
         android:translationZ="10dp"
         app:backgroundTint="@color/RojoPastel"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.453"
+        app:layout_constraintHorizontal_bias="0.417"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -86,19 +86,19 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/btnSalirNOA"
+        android:id="@+id/btnSalirNOJ"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="388dp"
+        android:layout_marginTop="384dp"
         android:elevation="35dp"
         android:fontFamily="@font/patrickhandregular"
         android:text="NO"
         android:textAlignment="center"
-        android:textSize="30dp"
+        android:textSize="35dp"
         android:translationZ="10dp"
         app:backgroundTint="@color/VerdeLlamativo"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.634"
+        app:layout_constraintHorizontal_bias="0.61"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

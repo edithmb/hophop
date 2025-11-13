@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.Window
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
@@ -18,9 +19,15 @@ class Normas : AppCompatActivity() {
         setContentView(R.layout.activity_normas)
 
         val btnContinuarNormas = findViewById<Button>(R.id.btnContinuarN)
+        val imageviewregresaraeleccion = findViewById<ImageView>(R.id.regresaraeleccion)
 
         btnContinuarNormas.setOnClickListener {
             mostrarCuentaRegresiva()
+        }
+
+        imageviewregresaraeleccion.setOnClickListener {
+            val inten = Intent(this, Eleccion::class.java)
+            startActivity(inten)
         }
     }
 

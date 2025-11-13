@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.Window
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -19,7 +20,9 @@ class Login : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         val btnContinuar1 = findViewById<Button>(R.id.btnContinuar1)
+        val btnRanking1 = findViewById<Button>(R.id.btnRanking1)
         val editTextNombre = findViewById<EditText>(R.id.EditTextNombre)
+        val imageviewregresar = findViewById<ImageView>(R.id.regresaralinicio)
 
         btnContinuar1.setOnClickListener {
 
@@ -37,6 +40,16 @@ class Login : AppCompatActivity() {
                 editTextNombre.error = "Por favor, escribe tu nombre completo"
             }
 
+        }
+
+        btnRanking1.setOnClickListener {
+            val intent = Intent(this, Ranking::class.java)
+            startActivity(intent)
+        }
+
+        imageviewregresar.setOnClickListener {
+            val inten = Intent(this, Inicio::class.java)
+            startActivity(inten)
         }
 
     }

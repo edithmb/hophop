@@ -37,15 +37,15 @@ class Inicio : AppCompatActivity() {
         dialog.setCancelable(false)
         dialog.setContentView(R.layout.mensaje_salir)
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-        val btnSalirSI = dialog.findViewById<Button>(R.id.btnSalirSI)
-        val btnSalirNO = dialog.findViewById<Button>(R.id.btnSalirNO)
+        val btnSalirSIA = dialog.findViewById<Button>(R.id.btnSalirSIA)
+        val btnSalirNOA = dialog.findViewById<Button>(R.id.btnSalirNOA)
 
-        btnSalirSI?.setOnClickListener {
+        btnSalirSIA?.setOnClickListener {
             dialog.dismiss()
             finishAffinity()
         }
 
-        btnSalirNO?.setOnClickListener {
+        btnSalirNOA?.setOnClickListener {
             dialog.dismiss()
         }
 

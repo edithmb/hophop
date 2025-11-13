@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.Window
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -20,6 +21,7 @@ class Loginpart2 : AppCompatActivity() {
 
         val btnContinuar2 = findViewById<Button>(R.id.btnContinuar2)
         val editTextApodo = findViewById<EditText>(R.id.EditTextApodo)
+        val imageviewregresarlogin = findViewById<ImageView>(R.id.regresaralogin)
 
         btnContinuar2.setOnClickListener {
 
@@ -37,6 +39,11 @@ class Loginpart2 : AppCompatActivity() {
                 editTextApodo.error = "Por favor, escribe tu apodo"
             }
 
+        }
+
+        imageviewregresarlogin.setOnClickListener {
+            val intent = Intent(this, Login::class.java)
+            startActivity(intent)
         }
 
     }
