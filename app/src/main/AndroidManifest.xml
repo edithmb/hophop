@@ -24,15 +24,15 @@
             android:exported="false"
             android:screenOrientation="landscape"/>
         <activity
-            android:name=".Inicio_mensaje"
-            android:exported="false"
-            android:screenOrientation="landscape"/>
-        <activity
             android:name=".Eleccion"
             android:exported="false"
             android:screenOrientation="landscape"/>
         <activity
             android:name=".Login"
+            android:exported="false"
+            android:screenOrientation="landscape"/>
+        <activity
+            android:name=".Loginpart2"
             android:exported="false"
             android:screenOrientation="landscape"/>
         <activity
