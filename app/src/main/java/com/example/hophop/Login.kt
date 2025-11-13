@@ -18,10 +18,10 @@ class Login : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        val btnContinuar = findViewById<Button>(R.id.btnContinuar)
+        val btnContinuar1 = findViewById<Button>(R.id.btnContinuar1)
         val editTextNombre = findViewById<EditText>(R.id.EditTextNombre)
 
-        btnContinuar.setOnClickListener {
+        btnContinuar1.setOnClickListener {
 
             val nombre = editTextNombre.text.toString().trim()
 
@@ -32,36 +32,12 @@ class Login : AppCompatActivity() {
                 editor.putString("nombreJugador", nombre)
                 editor.apply()
 
-                mostrarDialogoPersonalizado()
+                startActivity(Intent(this, Loginpart2 ::class.java))
             } else {
                 editTextNombre.error = "Por favor, escribe tu nombre completo"
             }
 
         }
 
-    }
-    private fun mostrarDialogoPersonalizado() {
-        val dialog = Dialog(this)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setCancelable(false)
-        dialog.setContentView(R.layout.mensaje_bienvenida)
-        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-
-        val sharedPref = getSharedPreferences("DatosJugador", Context.MODE_PRIVATE)
-        val nombreJugador = sharedPref.getString("nombreJugador", "Jugador")
-
-        // 🔹 2. Referenciar el TextView dentro del layout del diálogo
-        val txtBienvenida = dialog.findViewById<TextView>(R.id.txtBienvenida)
-
-        // 🔹 3. Personalizar el texto
-        txtBienvenida.text = "¡Bienvenid@, $nombreJugador!"
-
-       val btnContinuar = dialog.findViewById<Button>(R.id.btnContinuar)
-        btnContinuar.setOnClickListener {
-            dialog.dismiss()
-            startActivity(Intent(this, Eleccion::class.java))
-       }
-
-        dialog.show()
     }
 }

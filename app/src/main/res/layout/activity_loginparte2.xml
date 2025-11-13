@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ImageView
-        android:id="@+id/imagenFondo2"
+        android:id="@+id/imagenFondoL2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/hop_hop_login"
@@ -32,24 +32,36 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="348dp"
+        android:fontFamily="@font/fredokabold"
+        android:text="¡Es hora de crear un nombre divertido!"
+        android:textColor="@color/RojoPastel"
+        android:textSize="40dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.555"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <EditText
-        android:id="@+id/EditTextNombre"
+        android:id="@+id/EditTextApodo"
         android:layout_width="350dp"
         android:layout_height="70dp"
-        android:layout_marginTop="396dp"
+        android:layout_marginTop="412dp"
         android:background="@drawable/edittext_rounded"
         android:fontFamily="@font/patrickhandregular"
-        android:hint="Escribe tu nombre"
         android:textAlignment="center"
         android:textColorHint="#658A9A"
         android:textSize="35dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.55"
+        app:layout_constraintHorizontal_bias="0.527"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/btnContinuar1"
+        android:id="@+id/btnContinuar2"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="492dp"
@@ -61,15 +73,15 @@
         android:translationZ="10dp"
         app:backgroundTint="@color/RojoPastel"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.546"
+        app:layout_constraintHorizontal_bias="0.514"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/btnRanking1"
+        android:id="@+id/btnRanking2"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="556dp"
+        android:layout_marginTop="552dp"
         android:elevation="8dp"
         android:fontFamily="@font/patrickhandregular"
         android:text="Ranking"
@@ -77,7 +89,7 @@
         android:translationZ="4dp"
         app:backgroundTint="@color/AmarilloPastel"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.546"
+        app:layout_constraintHorizontal_bias="0.513"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
