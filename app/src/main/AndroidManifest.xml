@@ -36,6 +36,10 @@
             android:exported="false"
             android:screenOrientation="landscape"/>
         <activity
+            android:name=".Ranking"
+            android:exported="false"
+            android:screenOrientation="landscape"/>
+        <activity
             android:name=".Inicio"
             android:exported="true"
             android:screenOrientation="landscape">

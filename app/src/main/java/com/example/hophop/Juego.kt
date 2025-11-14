@@ -2,6 +2,7 @@ package com.example.hophop
 
 import android.app.Dialog
 import android.content.Intent
+import android.graphics.drawable.AnimationDrawable
 import android.os.Bundle
 import android.view.Window
 import android.widget.Button
@@ -16,6 +17,10 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 class Juego : AppCompatActivity() {
+
+    private lateinit var img: ImageView
+    private lateinit var zorroAnimation: AnimationDrawable
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_juego)
@@ -26,21 +31,36 @@ class Juego : AppCompatActivity() {
         val btnregresar = findViewById<Button>(R.id.btnRegresar)
         val txtviewprofileimage = findViewById<ImageView>(R.id.profile_image)
 
-        val img = ImageView (this)
-        img.layoutParams = LinearLayout.LayoutParams(
-            200,200
-                                                    )
+        val img = ImageView(this)
+
+        val params = ConstraintLayout.LayoutParams(300, 300)
+        img.y= 700f  // posición Y
+        params.startToStart = ConstraintLayout.LayoutParams.PARENT_ID
+        params.topToTop = ConstraintLayout.LayoutParams.PARENT_ID
+
+        img.layoutParams = params
 
 
         when (animalSeleccionado){
-            R.id.tarjetaConejo -> img.setImageResource(R.drawable.conejo)
-            R.id.tarjetaKoala -> img.setImageResource(R.drawable.koala)
-            R.id.tarjetaZorro -> img.setImageResource(R.drawable.zorro)
-            R.id.tarjetaGato -> img.setImageResource(R.drawable.gato)
-            R.id.tarjetaDinosaurio-> img.setImageResource(R.drawable.dinosaurio)
+            R.id.tarjetaConejo -> img.setImageResource(R.drawable.conejo_quieto)
+            R.id.tarjetaKoala -> img.setImageResource(R.drawable.koala_quieto)
+            R.id.tarjetaZorro -> {
+                img.setBackgroundResource(R.drawable.zorro_animation)
+                zorroAnimation = img.background as AnimationDrawable
+            }
+            R.id.tarjetaGato -> img.setImageResource(R.drawable.gato_quieto)
+            R.id.tarjetaDinosaurio-> img.setImageResource(R.drawable.dinosaurio_quieto)
 
         }
         layout.addView(img)
+
+        layout.setOnClickListener {
+            if (animalSeleccionado == R.id.tarjetaZorro) {
+                if (!zorroAnimation.isRunning) {
+                    zorroAnimation.start()
+                }
+            }
+        }
 
         btnregresar.setOnClickListener {
             mostrarSalirJuego()
@@ -64,7 +84,7 @@ class Juego : AppCompatActivity() {
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         val btnSalirSIJ = dialog.findViewById<Button>(R.id.btnSalirSIJ)
         val btnSalirNOJ = dialog.findViewById<Button>(R.id.btnSalirNOJ)
-        val intent = Intent(this, Normas::class.java)
+        val intent = Intent(this, Inicio::class.java)
 
         btnSalirSIJ?.setOnClickListener {
             dialog.dismiss()
