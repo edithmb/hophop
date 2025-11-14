@@ -37,14 +37,12 @@ class Eleccion : AppCompatActivity() {
         imgKoala = findViewById(R.id.tarjetaKoala)
 
         btnContinuarEleccion.setOnClickListener {
-            if (seleccionActual != null){
-                val intent = Intent(this, Juego::class.java)
-
+            if (seleccionActual != null) {
+                val intent = Intent(this, Normas::class.java)
                 intent.putExtra("animalSeleccionado", seleccionActual)
                 startActivity(intent)
-            }
-            else {
-                Toast.makeText(this, "Selecciona un animal primero 🐾", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Por favor selecciona un personaje", Toast.LENGTH_SHORT).show()
             }
         }
 

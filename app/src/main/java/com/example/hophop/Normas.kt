@@ -10,13 +10,18 @@ import android.view.Window
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
 class Normas : AppCompatActivity() {
 
+    private var animalSeleccionado: Int = -1
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_normas)
+
+        animalSeleccionado = intent.getIntExtra("animalSeleccionado", -1)
 
         val btnContinuarNormas = findViewById<Button>(R.id.btnContinuarN)
         val imageviewregresaraeleccion = findViewById<ImageView>(R.id.regresaraeleccion)
@@ -26,8 +31,7 @@ class Normas : AppCompatActivity() {
         }
 
         imageviewregresaraeleccion.setOnClickListener {
-            val inten = Intent(this, Eleccion::class.java)
-            startActivity(inten)
+            finish()
         }
     }
 
@@ -66,6 +70,7 @@ class Normas : AppCompatActivity() {
 
     private fun irAlJuego() {
         val intent = Intent(this, Juego::class.java)
+        intent.putExtra("animalSeleccionado", animalSeleccionado)
         startActivity(intent)
         finish()
     }

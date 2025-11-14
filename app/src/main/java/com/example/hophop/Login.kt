@@ -48,8 +48,8 @@ class Login : AppCompatActivity() {
         }
 
         imageviewregresar.setOnClickListener {
-            val inten = Intent(this, Inicio::class.java)
-            startActivity(inten)
+            val intent = Intent(this, Inicio::class.java)
+            startActivity(intent)
         }
 
     }
