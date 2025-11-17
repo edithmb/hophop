@@ -20,19 +20,18 @@ class Loginpart2 : AppCompatActivity() {
         setContentView(R.layout.activity_loginparte2)
 
         val btnContinuar2 = findViewById<Button>(R.id.btnContinuar2)
-        val btnRanking2 = findViewById<Button>(R.id.btnRanking2)
         val editTextApodo = findViewById<EditText>(R.id.EditTextApodo)
         val imageviewregresarlogin = findViewById<ImageView>(R.id.regresaralogin)
 
         btnContinuar2.setOnClickListener {
 
-            val nombre = editTextApodo.text.toString().trim()
+            val apodo = editTextApodo.text.toString().trim()
 
-            if (nombre.isNotEmpty()) {
+            if (apodo.isNotEmpty()) {
 
                 val sharedPref = getSharedPreferences("DatosJugador", Context.MODE_PRIVATE)
                 val editor = sharedPref.edit()
-                editor.putString("apodoJugador", nombre)
+                editor.putString("apodoJugador", apodo)
                 editor.apply()
 
                 mostrarDialogoPersonalizado()
@@ -47,10 +46,6 @@ class Loginpart2 : AppCompatActivity() {
             startActivity(intent)
         }
 
-        btnRanking2.setOnClickListener {
-            val intent = Intent(this, Ranking::class.java)
-            startActivity(intent)
-        }
 
     }
     private fun mostrarDialogoPersonalizado() {

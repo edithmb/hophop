@@ -10,6 +10,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import java.util.UUID
 
 class Eleccion : AppCompatActivity() {
 
@@ -38,6 +39,7 @@ class Eleccion : AppCompatActivity() {
 
         btnContinuarEleccion.setOnClickListener {
             if (seleccionActual != null) {
+
                 val intent = Intent(this, Normas::class.java)
                 intent.putExtra("animalSeleccionado", seleccionActual)
                 startActivity(intent)
@@ -77,7 +79,6 @@ class Eleccion : AppCompatActivity() {
         }
 
         seleccionActual = idSeleccionado
+
     }
-
-
 }

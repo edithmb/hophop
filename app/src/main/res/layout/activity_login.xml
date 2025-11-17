@@ -76,21 +76,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/btnRanking1"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="556dp"
-        android:elevation="8dp"
-        android:fontFamily="@font/patrickhandregular"
-        android:text="Ranking"
-        android:textSize="30dp"
-        android:translationZ="4dp"
-        app:backgroundTint="@color/AmarilloPastel"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.546"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
