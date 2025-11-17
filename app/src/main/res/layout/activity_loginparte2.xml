@@ -64,6 +64,7 @@
         android:background="@drawable/edittext_rounded"
         android:fontFamily="@font/patrickhandregular"
         android:textAlignment="center"
+        android:hint="Nombre divertido"
         android:textColorHint="#658A9A"
         android:textSize="35dp"
         app:layout_constraintEnd_toEndOf="parent"

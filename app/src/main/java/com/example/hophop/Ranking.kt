@@ -11,9 +11,9 @@ class Ranking : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ranking)
 
-        val imageviewregresarinicio = findViewById<ImageView>(R.id.regresaralinicio2)
+        val btnegresarinicio2 = findViewById<Button>(R.id.btnregresaralinicio2)
 
-        imageviewregresarinicio.setOnClickListener {
+        btnegresarinicio2.setOnClickListener {
             val intent = Intent(this, Inicio::class.java)
             startActivity(intent)
         }
