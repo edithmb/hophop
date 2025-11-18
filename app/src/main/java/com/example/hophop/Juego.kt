@@ -16,7 +16,7 @@ import androidx.constraintlayout.widget.Constraints
 class Juego : AppCompatActivity() {
 
     private lateinit var img: ImageView
-    private lateinit var zorroAnimation: AnimationDrawable
+    private lateinit var animalAnimation: AnimationDrawable
     private lateinit var fondo1: ImageView
     private lateinit var fondo2: ImageView
     private lateinit var layout: ConstraintLayout
@@ -25,6 +25,29 @@ class Juego : AppCompatActivity() {
     private var estaMoviendo = false
     private val velocidadScroll = 100f
     private var anchoFondo = 0
+    private val obstaculos = mutableListOf<Obstaculo>()
+    private val tiempoGeneracionObstaculos = 2000L
+    private val handlerObstaculos = Handler(Looper.getMainLooper())
+    private var juegoActivo = false
+    private var puntuacion = 0
+
+    private var generadorObstaculos = object : Runnable {
+        override fun run() {
+            if (juegoActivo){
+                generarObstaculo()
+                handlerObstaculos.postDelayed(this,tiempoGeneracionObstaculos)
+            }
+        }
+    }
+
+    private var verificadorColisiones = object : Runnable {
+        override fun run() {
+            if (juegoActivo){
+                verificarColisiones()
+                handler.postDelayed(this,50)
+            }
+        }
+    }
 
 
     private var movimientoRunnable = object : Runnable {
@@ -39,6 +62,9 @@ class Juego : AppCompatActivity() {
                 if (fondo2.x + anchoFondo <= 0) {
                     fondo2.x = fondo1.x + anchoFondo
                 }
+
+                moverObstaculos()
+
                 handler.postDelayed(this,50)
             }
         }
@@ -55,6 +81,8 @@ class Juego : AppCompatActivity() {
         val btnregresar = findViewById<Button>(R.id.btnRegresar)
         val txtviewprofileimage = findViewById<ImageView>(R.id.profile_image)
 
+        moverFondo()
+
         img = ImageView(this)
         val params = ConstraintLayout.LayoutParams(300, 300)
         img.y= 700f  // posición Y
@@ -65,26 +93,32 @@ class Juego : AppCompatActivity() {
 
 
         when (animalSeleccionado){
-            R.id.tarjetaConejo -> img.setImageResource(R.drawable.conejo_quieto)
-            R.id.tarjetaKoala -> img.setImageResource(R.drawable.koala_quieto)
+            R.id.tarjetaConejo -> {
+                img.setBackgroundResource(R.drawable.conejo_animation)
+            }
+            R.id.tarjetaKoala -> {
+                img.setBackgroundResource(R.drawable.koala_animation)
+            }
             R.id.tarjetaZorro -> {
                 img.setBackgroundResource(R.drawable.zorro_animation)
-                zorroAnimation = img.background as AnimationDrawable
             }
-            R.id.tarjetaGato -> img.setImageResource(R.drawable.gato_quieto)
-            R.id.tarjetaDinosaurio-> img.setImageResource(R.drawable.dinosaurio_quieto)
-
+            R.id.tarjetaGato -> {
+                img.setBackgroundResource(R.drawable.gato_animation)
+            }
+            R.id.tarjetaDinosaurio-> {
+                img.setBackgroundResource(R.drawable.dinosaurio_animation)
+            }
         }
+
+        animalAnimation = img.background as AnimationDrawable
+        layout.addView(img)
 
         layout.setOnClickListener {
-            if (animalSeleccionado == R.id.tarjetaZorro) {
-                if (!zorroAnimation.isRunning) {
-                    zorroAnimation.start()
-                    estaMoviendo = true
-                    handler.post(movimientoRunnable)
-                }
+            if (!animalAnimation.isRunning) {
+                iniciarJuego()
             }
         }
+
 
         btnregresar.setOnClickListener {
             mostrarSalirJuego()
@@ -98,10 +132,89 @@ class Juego : AppCompatActivity() {
             R.id.tarjetaDinosaurio-> txtviewprofileimage.setImageResource(R.drawable.dinosaurio)
 
         }
-
-        moverFondo()
-        layout.addView(img)
     }
+
+    private fun iniciarJuego(){
+        animalAnimation.start()
+        estaMoviendo = true
+        juegoActivo = true
+
+        handler.post(movimientoRunnable)
+        handlerObstaculos.post(generadorObstaculos)
+    }
+
+    private fun generarObstaculo(){
+        val obstaculoVista = ImageView(this)
+
+        val params = ConstraintLayout.LayoutParams(200,200)
+        obstaculoVista.layoutParams = params
+
+        val displayMetrics = resources.displayMetrics
+        obstaculoVista.x = displayMetrics.widthPixels.toFloat()
+
+        val posicionesY = listOf(
+            750f
+                                )
+
+        obstaculoVista.y = posicionesY.random()
+
+        val tiposDisponibles = listOf (
+            TipoObstaculo.fruta,
+            TipoObstaculo.dulce,
+            TipoObstaculo.arbusto )
+
+        val tipoElegido = tiposDisponibles.random()
+
+        val puntos = when (tipoElegido) {
+            TipoObstaculo.fruta -> {
+                val frutas = listOf(
+                    R.drawable.manzana,
+                    R.drawable.naranja,
+                    R.drawable.fresa )
+                obstaculoVista.setImageResource(frutas.random())
+                10
+            }
+
+            TipoObstaculo.dulce -> {
+                val dulces = listOf(
+                    R.drawable.paleta,
+                    R.drawable.caramelo,
+                    R.drawable.chocolate )
+                obstaculoVista.setImageResource(dulces.random())
+                -5
+            }
+
+            TipoObstaculo.arbusto -> {
+                obstaculoVista.setBackgroundResource(R.drawable.arbusto)
+                0
+            }
+        }
+
+        val nuevoObstaculo = Obstaculo(obstaculoVista, tipoElegido, puntos)
+        obstaculos.add(nuevoObstaculo)
+
+        layout.addView(obstaculoVista)
+    }
+
+    private fun moverObstaculos(){
+        val obstaculosAEliminar = mutableListOf<Obstaculo>()
+
+        for (obstaculo in obstaculos){
+            obstaculo.vista.x -= velocidadScroll
+
+            if(obstaculo.vista.x + obstaculo.vista.width < 0){
+                obstaculosAEliminar.add(obstaculo)
+            }
+        }
+
+        for (obstaculo in obstaculosAEliminar){
+            layout.removeView(obstaculo.vista)
+            obstaculos.remove(obstaculo)
+        }
+
+    }
+
+    private fun verificarColisiones(){}
 
     private fun moverFondo(){
 
