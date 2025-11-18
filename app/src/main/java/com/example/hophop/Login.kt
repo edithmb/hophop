@@ -20,7 +20,6 @@ class Login : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         val btnContinuar1 = findViewById<Button>(R.id.btnContinuar1)
-        val btnRanking1 = findViewById<Button>(R.id.btnRanking1)
         val editTextNombre = findViewById<EditText>(R.id.EditTextNombre)
         val imageviewregresar = findViewById<ImageView>(R.id.regresaralinicio)
 
@@ -42,15 +41,10 @@ class Login : AppCompatActivity() {
 
         }
 
-        btnRanking1.setOnClickListener {
-            val intent = Intent(this, Ranking::class.java)
-            startActivity(intent)
-        }
 
         imageviewregresar.setOnClickListener {
             val intent = Intent(this, Inicio::class.java)
             startActivity(intent)
         }
-
     }
 }
