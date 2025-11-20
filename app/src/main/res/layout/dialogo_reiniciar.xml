@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    android:padding="20dp">
+
+    <ImageView
+        android:id="@+id/iconoGameOver"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/regresar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="10dp"/>
+
+    <TextView
+        android:id="@+id/textoGameOver"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="¡Has chocado :( !"
+        android:textSize="24sp"
+        android:textColor="@color/LetraMarron"
+        android:fontFamily="@font/fredokaregular"
+        app:layout_constraintTop_toBottomOf="@id/iconoGameOver"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="15dp"/>
+
+    <TextView
+        android:id="@+id/textoPuntuacion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Puntuación: 0"
+        android:textSize="18sp"
+        android:fontFamily="@font/fredokaregular"
+        android:textColor="@color/LetraMarron"
+        app:layout_constraintTop_toBottomOf="@id/textoGameOver"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="10dp"/>
+
+    <Button
+        android:id="@+id/btnReiniciar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Reiniciar"
+        android:textSize="16sp"
+        android:backgroundTint = "@color/VerdeLlamativo"
+        app:layout_constraintTop_toBottomOf="@id/textoPuntuacion"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"/>
+
+    <Button
+        android:id="@+id/btnSalirJuego"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Salir"
+        android:textSize="16sp"
+        android:backgroundTint="@color/RojoPastel"
+        app:layout_constraintTop_toBottomOf="@id/btnReiniciar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

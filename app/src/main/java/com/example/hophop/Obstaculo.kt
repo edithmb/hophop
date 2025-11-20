@@ -10,6 +10,7 @@ data class Obstaculo (
 
 enum class TipoObstaculo{
     fruta,
+    verdura,
     dulce,
     arbusto
 }
