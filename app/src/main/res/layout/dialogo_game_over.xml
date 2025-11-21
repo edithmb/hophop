@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="350dp"
+    android:layout_height="wrap_content"
+    android:padding="24dp">
+
+    <!-- Icono de Game Over -->
+    <ImageView
+        android:id="@+id/iconoGameOver"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/carita"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="10dp"/>
+
+    <!-- Título Game Over -->
+    <TextView
+        android:id="@+id/textoGameOver"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="GAME OVER"
+        android:textSize="32sp"
+        android:textColor="#FF0000"
+        android:textStyle="bold"
+        android:fontFamily="@font/patrickhandregular"
+        app:layout_constraintTop_toBottomOf="@id/iconoGameOver"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="15dp"/>
+
+    <!-- Subtítulo -->
+    <TextView
+        android:id="@+id/textoSinVidas"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Te quedaste sin vidas"
+        android:textSize="18sp"
+        android:textColor="#666666"
+        android:fontFamily="@font/patrickhandregular"
+        app:layout_constraintTop_toBottomOf="@id/textoGameOver"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Puntuación final -->
+    <TextView
+        android:id="@+id/txtPuntuacionFinal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Puntuación final: 0"
+        android:textSize="22sp"
+        android:textColor="#333333"
+        android:textStyle="bold"
+        android:fontFamily="@font/patrickhandregular"
+        app:layout_constraintTop_toBottomOf="@id/textoSinVidas"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="15dp"/>
+
+    <!-- Botón Salir -->
+    <Button
+        android:id="@+id/btnSalirGameOver"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Volver al Inicio"
+        android:textSize="18sp"
+        android:fontFamily="@font/patrickhandregular"
+        android:backgroundTint="#FF5252"
+        app:layout_constraintTop_toBottomOf="@id/txtPuntuacionFinal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="10dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

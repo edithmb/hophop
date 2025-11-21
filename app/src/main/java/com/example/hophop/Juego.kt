@@ -90,8 +90,10 @@ class Juego : AppCompatActivity() {
         panelSuperior = findViewById(R.id.panelSuperior)
         txtPuntuacion = findViewById(R.id.txtPuntuacion)
         txtNombreUsuario = findViewById(R.id.txtNombreUsuario)
+        imgVidas = findViewById(R.id.imgVidas)
 
         vidasActuales = vidasMaximas
+        actualizarVidas()
 
         nombreUsuario = intent.getStringExtra("nombreUsuario") ?: "Jugador"
         txtNombreUsuario.text = nombreUsuario
@@ -334,23 +336,156 @@ class Juego : AppCompatActivity() {
             }
             TipoObstaculo.dulce -> {
                 puntuacion += obstaculo.puntos
-                println("Dulce... ${obstaculo.puntos} puntos. Total: $puntuacion")
+
 
                 actualizarPuntuacion()
+
+                if (puntuacion < 0){
+                    puntuacion = 0
+                    actualizarPuntuacion()
+                    detenerJuego()
+                    ocultarPanel()
+
+                    perderVida()
+
+                    if (vidasActuales > 0) {
+                        mostrarDialogoReintentar()
+                    } else {
+                        mostrarDialogoGameOver()
+                    }
+                    return
+
+                }
 
                 layout.removeView(obstaculo.vista)
                 obstaculos.remove(obstaculo)
             }
             TipoObstaculo.arbusto -> {
-                print("Chocaste contra un arbusto")
-                detenerJuego()
+                layout.removeView(obstaculo.vista)
+                obstaculos.remove(obstaculo)
 
+                detenerJuego()
                 ocultarPanel()
 
-                mostrarDialogoReiniciar()
+                perderVida()
+
+                if (vidasActuales > 0){
+                    mostrarDialogoReintentar()
+                }
+                else {
+                    mostrarDialogoGameOver()
+                }
+
+
+
             }
         }
 
+    }
+
+    private fun mostrarDialogoReintentar(){
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(false)
+        dialog.setContentView(R.layout.dialogo_reintentar)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        val btnReintentar = dialog.findViewById<Button>(R.id.btnReintentar)
+        val btnAbandonar = dialog.findViewById<Button>(R.id.btnAbandonar)
+        val txtVidasRestantes = dialog.findViewById<TextView>(R.id.txtVidasRestantes)
+        val txtPuntuacionActual = dialog.findViewById<TextView>(R.id.txtPuntuacionActual)
+
+        txtVidasRestantes?.text = "Vidas restantes: $vidasActuales"
+        txtPuntuacionActual?.text = "Puntuación: $puntuacion"
+
+        btnReintentar?.setOnClickListener {
+            dialog.dismiss()
+            reiniciarRonda()
+        }
+
+
+        btnAbandonar?.setOnClickListener {
+            dialog.dismiss()
+            abandonarPartida()
+        }
+
+        dialog.show()
+
+    }
+    private fun mostrarDialogoGameOver() {
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(false)
+        dialog.setContentView(R.layout.dialogo_game_over)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        val btnSalir = dialog.findViewById<Button>(R.id.btnSalirGameOver)
+        val txtPuntuacionFinal = dialog.findViewById<TextView>(R.id.txtPuntuacionFinal)
+
+        txtPuntuacionFinal?.text = "Puntuación final: $puntuacion"
+
+        btnSalir?.setOnClickListener {
+            dialog.dismiss()
+            volverAlInicio()
+        }
+
+        dialog.show()
+    }
+
+    private fun reiniciarRonda() {
+        for (obstaculo in obstaculos) {
+            layout.removeView(obstaculo.vista)
+        }
+        obstaculos.clear()
+
+        // Resetear la posición del animal
+        img.y = 700f
+
+        mostrarPanel()
+        iniciarJuego()
+
+    }
+    private fun abandonarPartida() {
+        puntuacion = 0
+        vidasActuales = vidasMaximas
+
+        for (obstaculo in obstaculos) {
+            layout.removeView(obstaculo.vista)
+        }
+        obstaculos.clear()
+
+        volverAlInicio()
+    }
+
+    private fun volverAlInicio() {
+        val intent = Intent(this, Inicio::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    private fun actualizarVidas(){
+        val imagenVidas = when(vidasActuales){
+            3 -> R.drawable.vida_3
+            2 -> R.drawable.vida_2
+            1 -> R.drawable.vida_1
+            0 -> R.drawable.vidas_0
+            else -> R.drawable.vidas_0
+        }
+
+        imgVidas.setImageResource(imagenVidas)
+    }
+
+    private fun perderVida(){
+        vidasActuales--
+
+        actualizarVidas()
+
+    }
+
+    private fun gameOver(){
+        detenerJuego()
+        ocultarPanel()
+        mostrarDialogoGameOver()
     }
 
     private fun moverFondo(){
@@ -396,34 +531,34 @@ class Juego : AppCompatActivity() {
         obstaculos.clear()
     }
 
-    private fun mostrarDialogoReiniciar(){
-        val dialog = Dialog(this)
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setCancelable(false)
-        dialog.setContentView(R.layout.dialogo_reiniciar)
-        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-
-        val IvReiniciar = dialog.findViewById<ImageView>(R.id.iVRegresar)
-        val IvSalirJuego = dialog.findViewById<ImageView>(R.id.iVSalir)
-
-        val textoPuntuacion = dialog.findViewById<TextView>(R.id.textoPuntuacion)
-        textoPuntuacion?.text = "Puntuacion: $puntuacion"
-
-        IvReiniciar.setOnClickListener {
-            dialog.dismiss()
-            reiniciarJuego()
-        }
-
-        IvSalirJuego.setOnClickListener {
-            dialog.dismiss()
-            val intent = Intent(this, Inicio::class.java)
-            startActivity(intent)
-            finish()
-        }
-
-        dialog.show()
-
-    }
+//    private fun mostrarDialogoReiniciar(){
+//        val dialog = Dialog(this)
+//        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+//        dialog.setCancelable(false)
+//        dialog.setContentView(R.layout.dialogo_reiniciar)
+//        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+//
+//        val IvReiniciar = dialog.findViewById<ImageView>(R.id.iVRegresar)
+//        val IvSalirJuego = dialog.findViewById<ImageView>(R.id.iVSalir)
+//
+//        val textoPuntuacion = dialog.findViewById<TextView>(R.id.textoPuntuacion)
+//        textoPuntuacion?.text = "Puntuacion: $puntuacion"
+//
+//        IvReiniciar.setOnClickListener {
+//            dialog.dismiss()
+//            reiniciarJuego()
+//        }
+//
+//        IvSalirJuego.setOnClickListener {
+//            dialog.dismiss()
+//            val intent = Intent(this, Inicio::class.java)
+//            startActivity(intent)
+//            finish()
+//        }
+//
+//        dialog.show()
+//
+//    }
 
     fun mostrarSalirJuego(){
 
@@ -442,8 +577,8 @@ class Juego : AppCompatActivity() {
 
         btnSalirSIJ?.setOnClickListener {
             dialog.dismiss()
-            startActivity(intent)
-
+            puntuacion = 0
+            volverAlInicio()
         }
 
         btnSalirNOJ?.setOnClickListener {
