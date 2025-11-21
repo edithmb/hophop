@@ -11,7 +11,7 @@ import java.util.*
 
 data class Partida (
     val idPartida: String,
-    val adJugador: String,
+    val NombreJugador: String,
     val alias: String,
     val animal: String,
     val fechaHora: String,
@@ -20,29 +20,18 @@ data class Partida (
     val frutasComidas: Int,
     val verdurasComidas: Int,
     val dulcesComidos: Int,
-    val ObstaculosChocados: Int )
+    val ObstaculosEvitados: Int,
+    val VidasPerdidas: Int)
 
 class GameDataManager (private val context: Context) {
 
-    private val fileName = "partidas.json"
-
-    private fun loadJson(): JSONArray {
-        return try {
-            val file = context.getFileStreamPath(fileName)
-            if (!file.exists()) {
-                JSONArray()
-            } else {
-                val text = context.openFileInput(fileName).bufferedReader().use { it.readText() }
-                JSONArray(text)
-            }
-        } catch (e: Exception) {
-            JSONArray()
+    private val folderName = "partidas"
+    private fun getPartidasDirectory(): File {
+        val dir = File(context.getExternalFilesDir(null), folderName)
+        if (!dir.exists()) {
+            dir.mkdirs()
         }
-    }
-
-    private fun saveJson(jsonArray: JSONArray) {
-        context.openFileOutput(fileName, Context.MODE_PRIVATE).use {
-            it.write(jsonArray.toString().toByteArray()) }
+        return dir
     }
 
     fun guardarPartida(
@@ -54,29 +43,41 @@ class GameDataManager (private val context: Context) {
         frutas: Int,
         verduras:Int,
         dulces:Int,
-        obstaculos:Int) {
+        obstaculos:Int,
+        vidas: Int) {
 
-
-        val json = loadJson()
-
-        val partidaJson = JSONObject().apply {
-            put("id_partida", UUID.randomUUID().toString())
-            put("id_jugador", idJugador)
-            put("alias", alias)
-            put("animal", animal)
+        try {
 
             val fecha = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
-            put("fecha_hora", fecha)
+            val idPartida = UUID.randomUUID().toString()
+            val partidaJson = JSONObject().apply {
+                put("id_partida", idPartida)
+                put("id_jugador", idJugador)
+                put("alias", alias)
+                put("animal", animal)
+                put("fecha_hora", fecha)
+                put("tiempo_juego_segundos", tiempo)
+                put("puntos_totales", puntos)
+                put("frutas_comidas", frutas)
+                put("verduras_comidas", verduras)
+                put("dulces_comidos", dulces)
+                put("obstaculos_evitados", obstaculos)
+                put("vidas_perdidas", vidas)
+            }
 
-            put("tiempo_juego_segundos", tiempo)
-            put("puntos_totales", puntos)
-            put("frutas_comidas", frutas)
-            put("verduras_comidas", verduras)
-            put("dulces_comidos", dulces)
-            put("obstaculos_chocados", obstaculos)
+            val dir = getPartidasDirectory()
+
+            val fechaParaNombre = fecha.replace(":", "-").replace(" ","_")
+            val fileName = "partida_${fechaParaNombre}_$idPartida.json"
+
+            val file = File(dir, fileName)
+
+            file.writeText(partidaJson.toString(4))
+            Log.d("GameDataManager", "Partida guardada en: ${file.absolutePath}")
+
+        } catch (e: Exception) {
+            Log.e("GameDataManager", "Error guardando la partida: ${e.message}")
         }
 
-        json.put(partidaJson)
-        saveJson(json)
     }
 }
