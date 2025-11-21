@@ -3,6 +3,7 @@ package com.example.hophop
 import android.app.Dialog
 import android.content.Intent
 import android.graphics.drawable.AnimationDrawable
+import android.media.Image
 import android.os.Bundle
 import android.os.Looper
 import android.os.Handler
@@ -137,22 +138,53 @@ class Juego : AppCompatActivity() {
     private fun iniciarJuego(){
         animalAnimation.start()
         estaMoviendo = true
-        juegoActivo = true
-
         handler.post(movimientoRunnable)
+
+        juegoActivo = true
         handlerObstaculos.post(generadorObstaculos)
+
+        handler.post(verificadorColisiones)
     }
+
+    private fun reiniciarJuego(){
+
+        detenerJuego()
+
+        for(obstaculo in obstaculos){
+            layout.removeView(obstaculo.vista)
+        }
+
+        obstaculos.clear()
+        puntuacion = 0
+        img.y = 700f
+        iniciarJuego()
+    }
+
+    private fun detenerJuego(){
+        juegoActivo = false
+        estaMoviendo = false
+
+        if(animalAnimation.isRunning){
+            animalAnimation.stop()
+        }
+
+        handler.removeCallbacks(movimientoRunnable)
+        handler.removeCallbacks(verificadorColisiones)
+        handlerObstaculos.removeCallbacks(generadorObstaculos)
+    }
+
 
     private fun generarObstaculo(){
         val obstaculoVista = ImageView(this)
 
-        val params = ConstraintLayout.LayoutParams(200,200)
+        val params = ConstraintLayout.LayoutParams(250,200)
         obstaculoVista.layoutParams = params
 
         val displayMetrics = resources.displayMetrics
         obstaculoVista.x = displayMetrics.widthPixels.toFloat()
 
         val posicionesY = listOf(
+            500f,
             750f
                                 )
 
@@ -172,7 +204,17 @@ class Juego : AppCompatActivity() {
                     R.drawable.naranja,
                     R.drawable.fresa )
                 obstaculoVista.setImageResource(frutas.random())
-                10
+                1
+            }
+
+            TipoObstaculo.verdura ->{
+                val verduras = listOf(
+                    R.drawable.brocoli,
+                    R.drawable.zanahoria,
+                    R.drawable.calabaza
+                                     )
+                obstaculoVista.setImageResource(verduras.random())
+                2
             }
 
             TipoObstaculo.dulce -> {
@@ -181,7 +223,7 @@ class Juego : AppCompatActivity() {
                     R.drawable.caramelo,
                     R.drawable.chocolate )
                 obstaculoVista.setImageResource(dulces.random())
-                -5
+                -1
             }
 
             TipoObstaculo.arbusto -> {
@@ -214,7 +256,69 @@ class Juego : AppCompatActivity() {
 
     }
 
-    private fun verificarColisiones(){}
+    private fun hayColision(vista1: ImageView, vista2: ImageView): Boolean {
+         val x1 = vista1.x
+         val y1 = vista1.y
+         val ancho1 = vista1.width
+         val alto1 = vista1.height
+
+         val x2 = vista2.x
+         val y2 = vista2.y
+         val ancho2 = vista2.width
+         val alto2 = vista2.height
+
+        return x1 < x2 + ancho2 && x1 + ancho1 > x2 &&
+                y1 < y2 + alto2 && y1 + alto1 > y2
+    }
+
+    private fun verificarColisiones(){
+
+        val obstaculosColisionados = mutableListOf<Obstaculo>()
+         for(obstaculo in obstaculos){
+             if (hayColision(img,obstaculo.vista)){
+                 obstaculosColisionados.add(obstaculo)
+             }
+         }
+
+        for (obstaculo in obstaculosColisionados){
+            manejarColision(obstaculo)
+        }
+
+    }
+
+    private fun manejarColision(obstaculo: Obstaculo){
+
+        when (obstaculo.tipo){
+            TipoObstaculo.fruta -> {
+                puntuacion += obstaculo.puntos
+                print("¡Fruta! +${obstaculo.puntos} puntos. Total: $puntuacion")
+
+                layout.removeView(obstaculo.vista)
+                obstaculos.remove(obstaculo)
+            }
+
+            TipoObstaculo.verdura -> {
+                puntuacion += obstaculo.puntos
+                print("¡Verdura! +${obstaculo.puntos} puntos. Total: $puntuacion")
+
+                layout.removeView(obstaculo.vista)
+                obstaculos.remove(obstaculo)
+            }
+            TipoObstaculo.dulce -> {
+                puntuacion += obstaculo.puntos
+                println("Dulce... ${obstaculo.puntos} puntos. Total: $puntuacion")
+
+                layout.removeView(obstaculo.vista)
+                obstaculos.remove(obstaculo)
+            }
+            TipoObstaculo.arbusto -> {
+                print("Chocaste contra un arbusto")
+                detenerJuego()
+                mostrarDialogoReiniciar()
+            }
+        }
+
+    }
 
     private fun moverFondo(){
 
@@ -251,8 +355,38 @@ class Juego : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        estaMoviendo = false
-        handler.removeCallbacks (movimientoRunnable)
+        detenerJuego()
+
+        for(obstaculo in obstaculos){
+            layout.removeView(obstaculo.vista)
+        }
+        obstaculos.clear()
+    }
+
+    private fun mostrarDialogoReiniciar(){
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(false)
+        dialog.setContentView(R.layout.dialogo_reiniciar)
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        val btnReiniciar = dialog.findViewById<Button>(R.id.btnReiniciar)
+        val btnSalirJuego = dialog.findViewById<Button>(R.id.btnSalirJuego)
+
+        btnReiniciar.setOnClickListener {
+            dialog.dismiss()
+            reiniciarJuego()
+        }
+
+        btnSalirJuego.setOnClickListener {
+            dialog.dismiss()
+            val intent = Intent(this, Inicio::class.java)
+            startActivity(intent)
+            finish()
+        }
+
+        dialog.show()
+
     }
 
     fun mostrarSalirJuego(){
@@ -277,5 +411,4 @@ class Juego : AppCompatActivity() {
 
         dialog.show()
     }
-
 }
