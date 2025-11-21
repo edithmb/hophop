@@ -7,14 +7,26 @@ import android.media.Image
 import android.os.Bundle
 import android.os.Looper
 import android.os.Handler
+import android.provider.Settings
+import android.view.View
 import android.view.Window
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Constraints
 
 class Juego : AppCompatActivity() {
+    private lateinit var panelSuperior: LinearLayout
+    private lateinit var txtPuntuacion: TextView
+    private lateinit var txtNombreUsuario: TextView
+    private lateinit var imgVidas: ImageView
+    private var nombreUsuario: String = "Jugador"
+    private var vidasActuales: Int = 3
+    private var vidasMaximas = 3
+
 
     private lateinit var img: ImageView
     private lateinit var animalAnimation: AnimationDrawable
@@ -23,13 +35,13 @@ class Juego : AppCompatActivity() {
     private lateinit var layout: ConstraintLayout
 
     private val handler = Handler(Looper.getMainLooper())
-    private var estaMoviendo = false
     private val velocidadScroll = 100f
     private var anchoFondo = 0
     private val obstaculos = mutableListOf<Obstaculo>()
     private val tiempoGeneracionObstaculos = 2000L
     private val handlerObstaculos = Handler(Looper.getMainLooper())
     private var juegoActivo = false
+    private var estaMoviendo = false
     private var puntuacion = 0
 
     private var generadorObstaculos = object : Runnable {
@@ -40,7 +52,6 @@ class Juego : AppCompatActivity() {
             }
         }
     }
-
     private var verificadorColisiones = object : Runnable {
         override fun run() {
             if (juegoActivo){
@@ -49,8 +60,6 @@ class Juego : AppCompatActivity() {
             }
         }
     }
-
-
     private var movimientoRunnable = object : Runnable {
         override fun run() {
             if (estaMoviendo){
@@ -75,7 +84,17 @@ class Juego : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_juego)
+
         layout = findViewById(R.id.juegolayout)
+
+        panelSuperior = findViewById(R.id.panelSuperior)
+        txtPuntuacion = findViewById(R.id.txtPuntuacion)
+        txtNombreUsuario = findViewById(R.id.txtNombreUsuario)
+
+        vidasActuales = vidasMaximas
+
+        nombreUsuario = intent.getStringExtra("nombreUsuario") ?: "Jugador"
+        txtNombreUsuario.text = nombreUsuario
 
 
         val animalSeleccionado = intent.getIntExtra("animalSeleccionado", -1)
@@ -156,6 +175,9 @@ class Juego : AppCompatActivity() {
 
         obstaculos.clear()
         puntuacion = 0
+
+        actualizarPuntuacion()
+        mostrarPanel()
         img.y = 700f
         iniciarJuego()
     }
@@ -193,11 +215,13 @@ class Juego : AppCompatActivity() {
         val tiposDisponibles = listOf (
             TipoObstaculo.fruta,
             TipoObstaculo.dulce,
+            TipoObstaculo.verdura,
             TipoObstaculo.arbusto )
 
         val tipoElegido = tiposDisponibles.random()
 
         val puntos = when (tipoElegido) {
+
             TipoObstaculo.fruta -> {
                 val frutas = listOf(
                     R.drawable.manzana,
@@ -293,6 +317,8 @@ class Juego : AppCompatActivity() {
                 puntuacion += obstaculo.puntos
                 print("¡Fruta! +${obstaculo.puntos} puntos. Total: $puntuacion")
 
+                actualizarPuntuacion()
+
                 layout.removeView(obstaculo.vista)
                 obstaculos.remove(obstaculo)
             }
@@ -301,6 +327,8 @@ class Juego : AppCompatActivity() {
                 puntuacion += obstaculo.puntos
                 print("¡Verdura! +${obstaculo.puntos} puntos. Total: $puntuacion")
 
+                actualizarPuntuacion()
+
                 layout.removeView(obstaculo.vista)
                 obstaculos.remove(obstaculo)
             }
@@ -308,12 +336,17 @@ class Juego : AppCompatActivity() {
                 puntuacion += obstaculo.puntos
                 println("Dulce... ${obstaculo.puntos} puntos. Total: $puntuacion")
 
+                actualizarPuntuacion()
+
                 layout.removeView(obstaculo.vista)
                 obstaculos.remove(obstaculo)
             }
             TipoObstaculo.arbusto -> {
                 print("Chocaste contra un arbusto")
                 detenerJuego()
+
+                ocultarPanel()
+
                 mostrarDialogoReiniciar()
             }
         }
@@ -370,15 +403,18 @@ class Juego : AppCompatActivity() {
         dialog.setContentView(R.layout.dialogo_reiniciar)
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-        val btnReiniciar = dialog.findViewById<Button>(R.id.btnReiniciar)
-        val btnSalirJuego = dialog.findViewById<Button>(R.id.btnSalirJuego)
+        val IvReiniciar = dialog.findViewById<ImageView>(R.id.iVRegresar)
+        val IvSalirJuego = dialog.findViewById<ImageView>(R.id.iVSalir)
 
-        btnReiniciar.setOnClickListener {
+        val textoPuntuacion = dialog.findViewById<TextView>(R.id.textoPuntuacion)
+        textoPuntuacion?.text = "Puntuacion: $puntuacion"
+
+        IvReiniciar.setOnClickListener {
             dialog.dismiss()
             reiniciarJuego()
         }
 
-        btnSalirJuego.setOnClickListener {
+        IvSalirJuego.setOnClickListener {
             dialog.dismiss()
             val intent = Intent(this, Inicio::class.java)
             startActivity(intent)
@@ -390,6 +426,11 @@ class Juego : AppCompatActivity() {
     }
 
     fun mostrarSalirJuego(){
+
+        detenerJuego()
+        ocultarPanel()
+
+
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setCancelable(false)
@@ -407,8 +448,25 @@ class Juego : AppCompatActivity() {
 
         btnSalirNOJ?.setOnClickListener {
             dialog.dismiss()
+
+            mostrarPanel()
+            iniciarJuego()
         }
 
         dialog.show()
     }
+
+    private fun actualizarPuntuacion(){
+        txtPuntuacion.text = "Puntos\n$puntuacion"
+    }
+
+    private fun mostrarPanel(){
+        panelSuperior.visibility = View.VISIBLE
+    }
+
+    private fun ocultarPanel(){
+        panelSuperior.visibility = View.GONE
+    }
+
+
 }

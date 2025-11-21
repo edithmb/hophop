@@ -3,6 +3,6 @@
     android:oneshot="false">
 
     <item android:drawable="@drawable/conejo_quieto" android:duration="100"/>
-    <item android:drawable="@drawable/conejo" android:duration="100"/>
+    <item android:drawable="@drawable/conejo1" android:duration="100"/>
     <item android:drawable="@drawable/conejo2" android:duration="100"/>
 </animation-list>
