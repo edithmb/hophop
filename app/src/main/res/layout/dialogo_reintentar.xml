@@ -9,9 +9,9 @@
     <!-- Icono de advertencia -->
     <ImageView
         android:id="@+id/iconoAdvertencia"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:src="@drawable/arbusto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/arbusto_chocado"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
