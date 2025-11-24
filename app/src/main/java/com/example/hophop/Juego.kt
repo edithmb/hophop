@@ -27,7 +27,7 @@ class Juego : AppCompatActivity() {
     private var vidasActuales: Int = 3
     private var vidasMaximas = 3
 
-
+    //variables de imagenes
     private lateinit var img: ImageView
     private lateinit var animalAnimation: AnimationDrawable
     private lateinit var fondo1: ImageView
@@ -35,14 +35,31 @@ class Juego : AppCompatActivity() {
     private lateinit var layout: ConstraintLayout
 
     private val handler = Handler(Looper.getMainLooper())
-    private val velocidadScroll = 100f
+
+    private val intervaloFrame = 50L
     private var anchoFondo = 0
     private val obstaculos = mutableListOf<Obstaculo>()
-    private val tiempoGeneracionObstaculos = 2000L
+    private val tiempoGeneracionObstaculos = 4000L
     private val handlerObstaculos = Handler(Looper.getMainLooper())
     private var juegoActivo = false
     private var estaMoviendo = false
     private var puntuacion = 0
+
+
+    //variables de salto
+    private var velocidadVertical: Float = 0f
+    private val gravedad: Float = 75f
+    private val fuerzaSalto: Float = -15f
+    private val posicionYSuelo: Float = 700f
+    private var estaSaltando: Boolean = false
+
+    //variables de velocidad
+    private var velocidadScrollActual = 15f
+    private val velocidadScrollMaxima = 30f
+    private val incrementoVelocidad = 0.5f
+    private var obstaculosGenerados = 0
+
+
 
     private var generadorObstaculos = object : Runnable {
         override fun run() {
@@ -63,8 +80,8 @@ class Juego : AppCompatActivity() {
     private var movimientoRunnable = object : Runnable {
         override fun run() {
             if (estaMoviendo){
-                fondo1.x -= velocidadScroll
-                fondo2.x -= velocidadScroll
+                fondo1.x -= velocidadScrollActual
+                fondo2.x -= velocidadScrollActual
 
                 if (fondo1.x + anchoFondo <= 0) {
                     fondo1.x = fondo2.x + anchoFondo
@@ -74,6 +91,7 @@ class Juego : AppCompatActivity() {
                 }
 
                 moverObstaculos()
+                aplicarGravedad()
 
                 handler.postDelayed(this,50)
             }
@@ -107,7 +125,7 @@ class Juego : AppCompatActivity() {
 
         img = ImageView(this)
         val params = ConstraintLayout.LayoutParams(300, 300)
-        img.y= 700f  // posición Y
+        img.y= posicionYSuelo  // posición Y
         params.startToStart = ConstraintLayout.LayoutParams.PARENT_ID
         params.topToTop = ConstraintLayout.LayoutParams.PARENT_ID
 
@@ -138,6 +156,9 @@ class Juego : AppCompatActivity() {
         layout.setOnClickListener {
             if (!animalAnimation.isRunning) {
                 iniciarJuego()
+            }
+            else {
+                saltar()
             }
         }
 
@@ -176,11 +197,17 @@ class Juego : AppCompatActivity() {
         }
 
         obstaculos.clear()
+
         puntuacion = 0
+
+        velocidadScrollActual = 15f
+        obstaculosGenerados = 0
 
         actualizarPuntuacion()
         mostrarPanel()
-        img.y = 700f
+        img.y = posicionYSuelo
+        velocidadVertical = 0f
+        estaSaltando = false
         iniciarJuego()
     }
 
@@ -197,6 +224,34 @@ class Juego : AppCompatActivity() {
         handlerObstaculos.removeCallbacks(generadorObstaculos)
     }
 
+    private fun saltar(){
+        if(!estaSaltando){
+            velocidadVertical = fuerzaSalto
+
+            estaSaltando = true
+        }
+        else {
+            print("ya esta saltando")
+        }
+    }
+
+    private fun aplicarGravedad(){
+        if (estaSaltando){
+            velocidadVertical += gravedad
+            img.y= velocidadVertical
+
+
+            //verifica si toco el suelo
+            if (img.y >= posicionYSuelo){
+                img.y = posicionYSuelo
+                velocidadVertical = 0f
+                estaSaltando = false
+            }
+        }
+    }
+
+
+
 
     private fun generarObstaculo(){
         val obstaculoVista = ImageView(this)
@@ -207,20 +262,31 @@ class Juego : AppCompatActivity() {
         val displayMetrics = resources.displayMetrics
         obstaculoVista.x = displayMetrics.widthPixels.toFloat()
 
-        val posicionesY = listOf(
-            500f,
-            750f
-                                )
+        obstaculosGenerados++
+        if(obstaculosGenerados % 10 == 0 && velocidadScrollActual < velocidadScrollMaxima){
+            velocidadScrollActual += incrementoVelocidad
+        }
 
-        obstaculoVista.y = posicionesY.random()
+        val random = (0..100).random()
 
-        val tiposDisponibles = listOf (
-            TipoObstaculo.fruta,
-            TipoObstaculo.dulce,
-            TipoObstaculo.verdura,
-            TipoObstaculo.arbusto )
+        val tipoElegido = when {
+            random < 35 -> TipoObstaculo.fruta
+            random < 65 -> TipoObstaculo.verdura
+            random < 85 -> TipoObstaculo.dulce
+            else -> TipoObstaculo.arbusto
+        }
 
-        val tipoElegido = tiposDisponibles.random()
+        val posicionesY = when (tipoElegido){
+            TipoObstaculo.arbusto -> {
+                posicionYSuelo
+            }
+            else -> {
+                val posicionesDisponibles = listOf(450f,600f, posicionYSuelo)
+                posicionesDisponibles.random()
+            }
+        }
+
+        obstaculoVista.y = posicionesY
 
         val puntos = when (tipoElegido) {
 
@@ -268,7 +334,7 @@ class Juego : AppCompatActivity() {
         val obstaculosAEliminar = mutableListOf<Obstaculo>()
 
         for (obstaculo in obstaculos){
-            obstaculo.vista.x -= velocidadScroll
+            obstaculo.vista.x -= velocidadScrollActual
 
             if(obstaculo.vista.x + obstaculo.vista.width < 0){
                 obstaculosAEliminar.add(obstaculo)
@@ -439,7 +505,10 @@ class Juego : AppCompatActivity() {
         obstaculos.clear()
 
         // Resetear la posición del animal
-        img.y = 700f
+        img.y = posicionYSuelo
+
+        velocidadVertical = 0f
+        estaSaltando = false
 
         mostrarPanel()
         iniciarJuego()
@@ -453,6 +522,9 @@ class Juego : AppCompatActivity() {
             layout.removeView(obstaculo.vista)
         }
         obstaculos.clear()
+
+        velocidadVertical = 0f
+        estaSaltando = false
 
         volverAlInicio()
     }
@@ -602,6 +674,4 @@ class Juego : AppCompatActivity() {
     private fun ocultarPanel(){
         panelSuperior.visibility = View.GONE
     }
-
-
 }
