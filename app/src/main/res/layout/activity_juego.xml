@@ -1,68 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/juegolayout">
+    android:id="@+id/juegolayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/imagenFondoJ"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/hop_hoop_juego"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
+    <!-- Panel superior del juego -->
     <LinearLayout
-        android:layout_width="1250dp"
+        android:id="@+id/panelSuperior"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
         android:background="@color/MarronPastel"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:padding="16dp"
-        android:weightSum="3"
+        android:elevation="10dp"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.266"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <!-- Foto de perfil del animal seleccionado -->
         <ImageView
             android:id="@+id/profile_image"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:layout_gravity="center"
             android:background="@drawable/circle_white"
             android:src="@drawable/gato"
-            android:layout_marginEnd="450dp"/>
+            android:padding="8dp"
+            android:scaleType="centerCrop"/>
 
+        <!-- Contenedor de nombre y vidas -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="16dp"
+            android:orientation="vertical"
+            android:gravity="start|center_vertical">
+
+            <TextView
+                android:id="@+id/txtNombreUsuario"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Jugador"
+                android:textSize="24sp"
+                android:textColor="@color/LetraMarron"
+                android:fontFamily="@font/patrickhandregular"/>
+
+            <!-- Vidas (corazones) -->
+            <ImageView
+                android:id="@+id/imgVidas"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginTop="4dp"
+                android:src="@drawable/vida_3"
+                android:scaleType="fitStart"
+                android:adjustViewBounds="true"/>
+        </LinearLayout>
+
+        <!-- Puntuación -->
         <TextView
-            android:layout_width="110dp"
-            android:layout_height="70dp"
+            android:id="@+id/txtPuntuacion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:background="@drawable/borde_textview"
-            android:text="Puntos \n0"
+            android:text="Puntos\n0"
             android:gravity="center"
             android:textSize="20sp"
             android:textColor="@color/LetraMarron"
             android:fontFamily="@font/patrickhandregular"
-            android:layout_marginEnd="300dp"
-            />
+            android:padding="8dp"
+            android:minWidth="110dp"
+            android:layout_marginStart="16dp"/>
 
+        <!-- Botón Regresar -->
         <Button
             android:id="@+id/btnRegresar"
-            android:layout_width="200dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:elevation="30dp"
             android:fontFamily="@font/patrickhandregular"
             android:text="Regresar"
             android:textAlignment="center"
-            android:textSize="30dp"
-            android:translationZ="10dp"
-            app:backgroundTint="@color/RojoPastel"
-            android:layout_marginEnd="16dp"/>
+            android:textSize="24sp"
+            android:paddingStart="24dp"
+            android:paddingEnd="24dp"
+            app:backgroundTint="@color/RojoPastel"/>
     </LinearLayout>
+
+    <!-- Aquí irá el resto del juego (fondo, animal, obstáculos) -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
