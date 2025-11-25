@@ -1,6 +1,7 @@
 package com.example.hophop
 
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.AnimationDrawable
 import android.media.Image
@@ -17,13 +18,15 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.Constraints
+import com.tuapp.juego.managers.GameDataManager
+import kotlin.coroutines.Continuation
 
 class Juego : AppCompatActivity() {
     private lateinit var panelSuperior: LinearLayout
     private lateinit var txtPuntuacion: TextView
     private lateinit var txtNombreUsuario: TextView
     private lateinit var imgVidas: ImageView
-    private var nombreUsuario: String = "Jugador"
+    private var nombreUsuario: String = ""
     private var vidasActuales: Int = 3
     private var vidasMaximas = 3
 
@@ -58,6 +61,16 @@ class Juego : AppCompatActivity() {
     private val velocidadScrollMaxima = 30f
     private val incrementoVelocidad = 0.5f
     private var obstaculosGenerados = 0
+
+    //variables de manejo de datos JSON
+    private lateinit var gameDataManager: GameDataManager
+    private var animalNombre: String = "Desconocido"
+    private var frutasComidas = 0
+    private var verdurasComidas = 0
+    private var dulcesComidos = 0
+    private var obstaculosEvitados = 0
+    private var tiempoDeJuego = 0
+    private var temporizadorActivo = false
 
 
 
@@ -103,6 +116,8 @@ class Juego : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_juego)
 
+        gameDataManager = GameDataManager(this)
+
         layout = findViewById(R.id.juegolayout)
 
         panelSuperior = findViewById(R.id.panelSuperior)
@@ -113,7 +128,8 @@ class Juego : AppCompatActivity() {
         vidasActuales = vidasMaximas
         actualizarVidas()
 
-        nombreUsuario = intent.getStringExtra("nombreUsuario") ?: "Jugador"
+        var sharedPref = getSharedPreferences("DatosJugador", Context.MODE_PRIVATE)
+        nombreUsuario = sharedPref.getString("apodoJugador", "Jugador") ?: "Jugador"
         txtNombreUsuario.text = nombreUsuario
 
 
@@ -135,18 +151,23 @@ class Juego : AppCompatActivity() {
         when (animalSeleccionado){
             R.id.tarjetaConejo -> {
                 img.setBackgroundResource(R.drawable.conejo_animation)
+                animalNombre = "conejo"
             }
             R.id.tarjetaKoala -> {
                 img.setBackgroundResource(R.drawable.koala_animation)
+                animalNombre = "Koala"
             }
             R.id.tarjetaZorro -> {
                 img.setBackgroundResource(R.drawable.zorro_animation)
+                animalNombre = "Zorro"
             }
             R.id.tarjetaGato -> {
                 img.setBackgroundResource(R.drawable.gato_animation)
+                animalNombre = "Gato"
             }
             R.id.tarjetaDinosaurio-> {
                 img.setBackgroundResource(R.drawable.dinosaurio_animation)
+                animalNombre = "Dinosaurio"
             }
         }
 
@@ -155,6 +176,8 @@ class Juego : AppCompatActivity() {
 
         layout.setOnClickListener {
             if (!animalAnimation.isRunning) {
+                reiniciarContadores()
+                iniciarTemporizador()
                 iniciarJuego()
             }
             else {
@@ -337,6 +360,9 @@ class Juego : AppCompatActivity() {
             obstaculo.vista.x -= velocidadScrollActual
 
             if(obstaculo.vista.x + obstaculo.vista.width < 0){
+                if (obstaculo.tipo == TipoObstaculo.arbusto) {
+                    obstaculosEvitados++
+                }
                 obstaculosAEliminar.add(obstaculo)
             }
         }
@@ -382,6 +408,7 @@ class Juego : AppCompatActivity() {
 
         when (obstaculo.tipo){
             TipoObstaculo.fruta -> {
+                frutasComidas++
                 puntuacion += obstaculo.puntos
                 print("¡Fruta! +${obstaculo.puntos} puntos. Total: $puntuacion")
 
@@ -392,6 +419,7 @@ class Juego : AppCompatActivity() {
             }
 
             TipoObstaculo.verdura -> {
+                verdurasComidas++
                 puntuacion += obstaculo.puntos
                 print("¡Verdura! +${obstaculo.puntos} puntos. Total: $puntuacion")
 
@@ -401,6 +429,7 @@ class Juego : AppCompatActivity() {
                 obstaculos.remove(obstaculo)
             }
             TipoObstaculo.dulce -> {
+                dulcesComidos++
                 puntuacion += obstaculo.puntos
 
 
@@ -479,6 +508,30 @@ class Juego : AppCompatActivity() {
 
     }
     private fun mostrarDialogoGameOver() {
+
+        temporizadorActivo = false
+
+        try {
+
+            val idJugador = nombreUsuario
+            gameDataManager.guardarPartida(
+                idJugador = idJugador,
+                alias = nombreUsuario,
+                animal = animalNombre,
+                tiempo = tiempoDeJuego,
+                puntos = puntuacion,
+                frutas = frutasComidas,
+                verduras = verdurasComidas,
+                dulces = dulcesComidos,
+                obstaculos = obstaculosEvitados,
+                vidas = vidasMaximas - vidasActuales)
+
+            val ruta = gameDataManager.getPartidasPath()
+            android.util.Log.d("Juego", "Partida guardada en carpeta: $ruta")
+        } catch (e: Exception) {
+            android.util.Log.e("Juego", "Error guardando partida: ${e.message}")
+        }
+
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setCancelable(false)
@@ -674,4 +727,26 @@ class Juego : AppCompatActivity() {
     private fun ocultarPanel(){
         panelSuperior.visibility = View.GONE
     }
+
+    private fun iniciarTemporizador() {
+        temporizadorActivo = true
+        val runnable = object : Runnable {
+            override fun run() {
+                if(temporizadorActivo) {
+                    tiempoDeJuego++
+                    handler.postDelayed(this, 1000)
+                }
+            }
+        }
+        handler.post(runnable)
+    }
+
+    private fun reiniciarContadores() {
+        frutasComidas = 0
+        verdurasComidas = 0
+        dulcesComidos = 0
+        obstaculosEvitados = 0
+        tiempoDeJuego = 0
+    }
 }
+
