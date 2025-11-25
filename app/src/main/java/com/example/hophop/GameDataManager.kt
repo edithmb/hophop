@@ -80,4 +80,8 @@ class GameDataManager (private val context: Context) {
         }
 
     }
+
+    fun getPartidasPath(): String {
+        return getPartidasDirectory().absolutePath
+    }
 }
