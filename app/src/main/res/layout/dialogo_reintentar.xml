@@ -23,10 +23,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="¡Chocaste!"
-        android:textSize="26sp"
-        android:textColor="#FF5252"
-        android:textStyle="bold"
+        android:textSize="40sp"
+        android:textColor="@color/RojoPastel"
         android:fontFamily="@font/patrickhandregular"
+        android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/iconoAdvertencia"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -39,13 +39,13 @@
         android:layout_height="wrap_content"
         android:text="Vidas restantes: 2"
         android:textSize="20sp"
-        android:textColor="#4CAF50"
-        android:textStyle="bold"
+        android:textColor="@color/LetraMarron"
         android:fontFamily="@font/patrickhandregular"
+        android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/textoChoque"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="10dp"/>
+        android:layout_marginTop="20dp"/>
 
     <!-- Puntuación actual -->
     <TextView
@@ -54,40 +54,37 @@
         android:layout_height="wrap_content"
         android:text="Puntuación: 50"
         android:textSize="18sp"
-        android:textColor="#333333"
+        android:textColor="@color/LetraMarron"
         android:fontFamily="@font/patrickhandregular"
+        android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/txtVidasRestantes"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp"/>
+        android:layout_marginTop="15dp"/>
 
-    <!-- Botón Reintentar -->
-    <Button
-        android:id="@+id/btnReintentar"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Reintentar"
-        android:textSize="18sp"
+    <ImageView
+        android:id="@+id/TVReintentar"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="52dp"
         android:fontFamily="@font/patrickhandregular"
-        android:backgroundTint="#4CAF50"
-        app:layout_constraintTop_toBottomOf="@id/txtPuntuacionActual"
-        app:layout_constraintStart_toStartOf="parent"
+        android:src="@drawable/regresar"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="20dp"/>
+        app:layout_constraintHorizontal_bias="0.274"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txtVidasRestantes" />
 
-    <!-- Botón Abandonar -->
-    <Button
-        android:id="@+id/btnAbandonar"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Abandonar"
-        android:textSize="18sp"
+    <ImageView
+        android:id="@+id/TVSalir"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="56dp"
         android:fontFamily="@font/patrickhandregular"
-        android:backgroundTint="#FF9800"
-        app:layout_constraintTop_toBottomOf="@id/btnReintentar"
-        app:layout_constraintStart_toStartOf="parent"
+        android:src="@drawable/salir"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"/>
+        app:layout_constraintHorizontal_bias="0.896"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/txtVidasRestantes" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
