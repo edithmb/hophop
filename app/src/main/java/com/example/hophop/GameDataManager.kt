@@ -84,4 +84,85 @@ class GameDataManager (private val context: Context) {
     fun getPartidasPath(): String {
         return getPartidasDirectory().absolutePath
     }
+
+    fun leerTodasLaspartidas(): List<Partida>{
+        val partidas = mutableListOf<Partida>()
+        val dir = getPartidasDirectory()
+
+        try{
+            val archivos = dir.listFiles{ file -> file.extension == "json"}
+
+            archivos?.forEach { file ->
+                try{
+                    val jsonString = file.readText()
+                    val json = JSONObject(jsonString)
+
+                    val partida = Partida(
+                        idPartida = json.getString("id_partida"),
+                        NombreJugador = json.getString("id_jugador"),
+                        alias = json.getString("alias"),
+                        animal = json.getString("animal"),
+                        fechaHora = json.getString("fecha_hora"),
+                        tiempoJuegoSegundos = json.getInt("tiempo_juego_segundos"),
+                        puntosTotales = json.getInt("puntos_totales"),
+                        frutasComidas = json.getInt("frutas_comidas"),
+                        verdurasComidas = json.getInt("verduras_comidas"),
+                        dulcesComidos = json.getInt("dulces_comidos"),
+                        ObstaculosEvitados = json.getInt("obstaculos_evitados"),
+                        VidasPerdidas = json.getInt("vidas_perdidas")
+                                         )
+                    partidas.add(partida)
+                } catch (e: Exception){
+                    Log.e("GameDataManager", "Error leyendo archivo ${file.name}: ${e.message}")
+                }
+
+            }
+            Log.d("GameDataManager", "Total partidas leídas: ${partidas.size}")
+        }
+        catch (e: Exception){
+            Log.e("GameDataManager", "Error leyendo directorio: ${e.message}")
+
+        }
+
+        return partidas
+    }
+
+
+    fun ObtenerPartidasComoJSONArray (): String {
+        val partidas = leerTodasLaspartidas()
+        val jsonArray = JSONArray()
+
+        partidas.forEach { partida ->
+            val json = JSONObject().apply {
+                put("id_partida", partida.idPartida)
+                put("id_jugador",partida.NombreJugador)
+                put("alias", partida.alias)
+                put("animal",partida.animal)
+                put("fecha_hora",partida.fechaHora)
+                put("tiempo_juego_segundos",partida.tiempoJuegoSegundos)
+                put("puntos_totales",partida.puntosTotales)
+                put("frutas_comidas",partida.frutasComidas)
+                put("verduras_comidas", partida.verdurasComidas)
+                put("dulces_comidos", partida.dulcesComidos)
+                put("obstaculos_evitados", partida.ObstaculosEvitados)
+                put("vidas_perdidas", partida.VidasPerdidas)
+            }
+            jsonArray.put(json)
+        }
+        return jsonArray.toString()
+    }
+
+    fun ContarPartidas(): Int {
+        return getPartidasDirectory().listFiles() { file -> file.extension == "json"}
+            ?.size ?: 0
+
+    }
+    fun ObtenerUltimasPartidas(limite: Int = 10 ): List<Partida>{
+        return leerTodasLaspartidas().sortedByDescending { it.fechaHora }.take(limite)
+    }
+
+    fun eliminarTodasLasPartidas(){
+
+    }
+
 }

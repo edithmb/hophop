@@ -485,21 +485,21 @@ class Juego : AppCompatActivity() {
         dialog.setContentView(R.layout.dialogo_reintentar)
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-        val btnReintentar = dialog.findViewById<Button>(R.id.btnReintentar)
-        val btnAbandonar = dialog.findViewById<Button>(R.id.btnAbandonar)
+        val TVReintentar = dialog.findViewById<ImageView>(R.id.TVReintentar)
+        val TVAbandonar = dialog.findViewById<ImageView>(R.id.TVSalir)
         val txtVidasRestantes = dialog.findViewById<TextView>(R.id.txtVidasRestantes)
         val txtPuntuacionActual = dialog.findViewById<TextView>(R.id.txtPuntuacionActual)
 
         txtVidasRestantes?.text = "Vidas restantes: $vidasActuales"
         txtPuntuacionActual?.text = "Puntuación: $puntuacion"
 
-        btnReintentar?.setOnClickListener {
+        TVReintentar?.setOnClickListener {
             dialog.dismiss()
             reiniciarRonda()
         }
 
 
-        btnAbandonar?.setOnClickListener {
+        TVAbandonar?.setOnClickListener {
             dialog.dismiss()
             abandonarPartida()
         }
