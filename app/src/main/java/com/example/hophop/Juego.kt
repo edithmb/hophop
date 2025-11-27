@@ -17,16 +17,15 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.Constraints
-import com.tuapp.juego.managers.GameDataManager
-import kotlin.coroutines.Continuation
 
 class Juego : AppCompatActivity() {
     private lateinit var panelSuperior: LinearLayout
     private lateinit var txtPuntuacion: TextView
     private lateinit var txtNombreUsuario: TextView
     private lateinit var imgVidas: ImageView
+
     private var nombreUsuario: String = ""
+
     private var vidasActuales: Int = 3
     private var vidasMaximas = 3
 
@@ -118,6 +117,8 @@ class Juego : AppCompatActivity() {
 
         gameDataManager = GameDataManager(this)
 
+
+
         layout = findViewById(R.id.juegolayout)
 
         panelSuperior = findViewById(R.id.panelSuperior)
@@ -198,6 +199,14 @@ class Juego : AppCompatActivity() {
             R.id.tarjetaDinosaurio-> txtviewprofileimage.setImageResource(R.drawable.dinosaurio)
 
         }
+    }
+
+    private fun resetearMetricas(){
+        frutasComidas = 0
+        verdurasComidas = 0
+        dulcesComidos = 0
+        obstaculosEvitados = 0
+
     }
 
     private fun iniciarJuego(){

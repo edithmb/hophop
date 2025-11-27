@@ -1,4 +1,4 @@
-package com.tuapp.juego.managers
+package com.example.hophop
 
 import android.content.Context
 import android.os.Build
@@ -162,6 +162,27 @@ class GameDataManager (private val context: Context) {
     }
 
     fun eliminarTodasLasPartidas(){
+
+        try {
+            val dir = getPartidasDirectory()
+            dir.listFiles()?.forEach { file ->
+                file.delete()
+            }
+            Log.d("GameDataManager","Todas las partidas eliminadas")
+
+        } catch (e: Exception){
+            Log.e("GameDataManager", "Error eliminado partidas: ${e.message}")
+
+        }
+
+    }
+
+    fun tieneDatosInsuficientes(minimo: Int = 5): Boolean {
+        val total = ContarPartidas()
+
+        Log.d("GameDataManager","Partidas Disponibles: $total (minimo: $minimo)")
+
+        return total >= minimo
 
     }
 
