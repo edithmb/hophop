@@ -1,6 +1,10 @@
+import org.gradle.internal.impldep.org.apache.ivy.util.url.IvyAuthenticator.install
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("com.chaquo.python")
+
 }
 
 android {
@@ -15,7 +19,26 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        ndk {
+            abiFilters += listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
+        }
+
+//        python {
+//            // Ruta a Python en tu PC (ajusta según tu instalación)
+//            buildPython("python3")  // En Windows puede ser "python" o "C:/Python311/python.exe"
+//
+//            // Librerías que necesitas instalar
+//            pip {
+//                install("pandas==2.0.3")
+//                install("matplotlib==3.7.2")
+//                install("numpy==1.24.3")
+//                install("scikit-learn==1.3.0")
+//            }
+//        }
     }
+
+
 
     buildTypes {
         release {

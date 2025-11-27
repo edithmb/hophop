@@ -128,7 +128,7 @@ class GameDataManager (private val context: Context) {
     }
 
 
-    fun ObtenerPartidasComoJSONArray (): String {
+    fun obtenerPartidasComoJSONArray (): String {
         val partidas = leerTodasLaspartidas()
         val jsonArray = JSONArray()
 
@@ -152,12 +152,12 @@ class GameDataManager (private val context: Context) {
         return jsonArray.toString()
     }
 
-    fun ContarPartidas(): Int {
+    fun contarPartidas(): Int {
         return getPartidasDirectory().listFiles() { file -> file.extension == "json"}
             ?.size ?: 0
 
     }
-    fun ObtenerUltimasPartidas(limite: Int = 10 ): List<Partida>{
+    fun obtenerUltimasPartidas(limite: Int = 10 ): List<Partida>{
         return leerTodasLaspartidas().sortedByDescending { it.fechaHora }.take(limite)
     }
 
@@ -178,7 +178,7 @@ class GameDataManager (private val context: Context) {
     }
 
     fun tieneDatosInsuficientes(minimo: Int = 5): Boolean {
-        val total = ContarPartidas()
+        val total = contarPartidas()
 
         Log.d("GameDataManager","Partidas Disponibles: $total (minimo: $minimo)")
 

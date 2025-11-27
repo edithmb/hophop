@@ -9,6 +9,8 @@ import android.os.Bundle
 import android.os.Looper
 import android.os.Handler
 import android.provider.Settings
+import android.util.Log
+import android.util.Log.e
 import android.view.View
 import android.view.Window
 import android.widget.Button
@@ -450,6 +452,8 @@ class Juego : AppCompatActivity() {
                     detenerJuego()
                     ocultarPanel()
 
+                    temporizadorActivo = false
+
                     perderVida()
 
                     if (vidasActuales > 0) {
@@ -470,6 +474,8 @@ class Juego : AppCompatActivity() {
 
                 detenerJuego()
                 ocultarPanel()
+
+                temporizadorActivo = false
 
                 perderVida()
 
@@ -495,7 +501,7 @@ class Juego : AppCompatActivity() {
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         val TVReintentar = dialog.findViewById<ImageView>(R.id.TVReintentar)
-        val TVAbandonar = dialog.findViewById<ImageView>(R.id.TVSalir)
+        val TVSalir = dialog.findViewById<ImageView>(R.id.TVSalir)
         val txtVidasRestantes = dialog.findViewById<TextView>(R.id.txtVidasRestantes)
         val txtPuntuacionActual = dialog.findViewById<TextView>(R.id.txtPuntuacionActual)
 
@@ -504,12 +510,14 @@ class Juego : AppCompatActivity() {
 
         TVReintentar?.setOnClickListener {
             dialog.dismiss()
+            temporizadorActivo = true
             reiniciarRonda()
         }
 
 
-        TVAbandonar?.setOnClickListener {
+        TVSalir?.setOnClickListener {
             dialog.dismiss()
+            temporizadorActivo = false
             abandonarPartida()
         }
 
@@ -573,10 +581,32 @@ class Juego : AppCompatActivity() {
         estaSaltando = false
 
         mostrarPanel()
+        temporizadorActivo = true
         iniciarJuego()
 
     }
     private fun abandonarPartida() {
+        temporizadorActivo  = false
+
+//        try {
+//            val idJugador = nombreUsuario
+//            gameDataManager.guardarPartida(
+//                idJugador = idJugador,
+//                alias = nombreUsuario,
+//                animal = animalNombre,
+//                tiempo = tiempoDeJuego,
+//                puntos = puntuacion,
+//                frutas = frutasComidas,
+//                verduras = verdurasComidas,
+//                dulces = dulcesComidos,
+//                obstaculos = obstaculosEvitados,
+//                vidas = vidasMaximas - vidasActuales
+//            )
+//            Log.d("Juego", "Partida guardada al abandonar")
+//        } catch (e: Exception) {
+//            Log.e("Juego", "Error guardando partida: ${e.message}")
+//        }
+
         puntuacion = 0
         vidasActuales = vidasMaximas
 
@@ -699,6 +729,8 @@ class Juego : AppCompatActivity() {
         detenerJuego()
         ocultarPanel()
 
+        temporizadorActivo = false
+
 
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -719,6 +751,7 @@ class Juego : AppCompatActivity() {
             dialog.dismiss()
 
             mostrarPanel()
+            temporizadorActivo = true
             iniciarJuego()
         }
 
