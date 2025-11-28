@@ -43,7 +43,6 @@ class Juego : AppCompatActivity() {
     private val intervaloFrame = 50L
     private var anchoFondo = 0
     private val obstaculos = mutableListOf<Obstaculo>()
-    private val tiempoGeneracionObstaculos = 4000L
     private val handlerObstaculos = Handler(Looper.getMainLooper())
     private var juegoActivo = false
     private var estaMoviendo = false
@@ -52,16 +51,17 @@ class Juego : AppCompatActivity() {
 
     //variables de salto
     private var velocidadVertical: Float = 0f
-    private val gravedad: Float = 75f
-    private val fuerzaSalto: Float = -15f
+    private val gravedad: Float = 1.2f
+    private val fuerzaSalto: Float =-45f
     private val posicionYSuelo: Float = 700f
     private var estaSaltando: Boolean = false
 
     //variables de velocidad
-    private var velocidadScrollActual = 15f
-    private val velocidadScrollMaxima = 30f
-    private val incrementoVelocidad = 0.5f
+    private var velocidadScrollActual = 8f
+    private val velocidadScrollMaxima = 20f
+    private val incrementoVelocidad = 0.3f
     private var obstaculosGenerados = 0
+    private val tiempoGeneracionObstaculos = 4000L
 
     //variables de manejo de datos JSON
     private lateinit var gameDataManager: GameDataManager
@@ -87,7 +87,16 @@ class Juego : AppCompatActivity() {
         override fun run() {
             if (juegoActivo){
                 verificarColisiones()
-                handler.postDelayed(this,50)
+                handler.postDelayed(this,16)
+            }
+        }
+    }
+
+    private val temporizadorRunnable = object: Runnable {
+        override fun run() {
+            if (temporizadorActivo){
+                tiempoDeJuego++
+                handler.postDelayed(this, 1000)
             }
         }
     }
@@ -107,7 +116,7 @@ class Juego : AppCompatActivity() {
                 moverObstaculos()
                 aplicarGravedad()
 
-                handler.postDelayed(this,50)
+                handler.postDelayed(this,16)
             }
         }
     }
@@ -223,7 +232,6 @@ class Juego : AppCompatActivity() {
     }
 
     private fun reiniciarJuego(){
-
         detenerJuego()
 
         for(obstaculo in obstaculos){
@@ -234,20 +242,22 @@ class Juego : AppCompatActivity() {
 
         puntuacion = 0
 
-        velocidadScrollActual = 15f
+        velocidadScrollActual = 8f
         obstaculosGenerados = 0
+        velocidadVertical = 0f
+        estaSaltando = false
 
         actualizarPuntuacion()
         mostrarPanel()
         img.y = posicionYSuelo
-        velocidadVertical = 0f
-        estaSaltando = false
+
         iniciarJuego()
     }
 
     private fun detenerJuego(){
         juegoActivo = false
         estaMoviendo = false
+        temporizadorActivo = false
 
         if(animalAnimation.isRunning){
             animalAnimation.stop()
@@ -255,6 +265,7 @@ class Juego : AppCompatActivity() {
 
         handler.removeCallbacks(movimientoRunnable)
         handler.removeCallbacks(verificadorColisiones)
+        handler.removeCallbacks(temporizadorRunnable)
         handlerObstaculos.removeCallbacks(generadorObstaculos)
     }
 
@@ -272,7 +283,7 @@ class Juego : AppCompatActivity() {
     private fun aplicarGravedad(){
         if (estaSaltando){
             velocidadVertical += gravedad
-            img.y= velocidadVertical
+            img.y += velocidadVertical
 
 
             //verifica si toco el suelo
@@ -296,8 +307,9 @@ class Juego : AppCompatActivity() {
         val displayMetrics = resources.displayMetrics
         obstaculoVista.x = displayMetrics.widthPixels.toFloat()
 
+        //aumentar velocidad
         obstaculosGenerados++
-        if(obstaculosGenerados % 10 == 0 && velocidadScrollActual < velocidadScrollMaxima){
+        if(obstaculosGenerados % 15 == 0 && velocidadScrollActual < velocidadScrollMaxima){
             velocidadScrollActual += incrementoVelocidad
         }
 
@@ -315,7 +327,10 @@ class Juego : AppCompatActivity() {
                 posicionYSuelo
             }
             else -> {
-                val posicionesDisponibles = listOf(450f,600f, posicionYSuelo)
+                val posicionesDisponibles = listOf(
+                    550f,
+                    650f,
+                    posicionYSuelo)
                 posicionesDisponibles.random()
             }
         }
@@ -365,24 +380,23 @@ class Juego : AppCompatActivity() {
     }
 
     private fun moverObstaculos(){
-        val obstaculosAEliminar = mutableListOf<Obstaculo>()
+        val iterator = obstaculos.iterator()
 
-        for (obstaculo in obstaculos){
+        while (iterator.hasNext()){
+            val obstaculo = iterator.next()
+
             obstaculo.vista.x -= velocidadScrollActual
 
             if(obstaculo.vista.x + obstaculo.vista.width < 0){
-                if (obstaculo.tipo == TipoObstaculo.arbusto) {
+
+                if(obstaculo.tipo == TipoObstaculo.arbusto){
                     obstaculosEvitados++
                 }
-                obstaculosAEliminar.add(obstaculo)
+
+                layout.removeView(obstaculo.vista)
+                iterator.remove()
             }
         }
-
-        for (obstaculo in obstaculosAEliminar){
-            layout.removeView(obstaculo.vista)
-            obstaculos.remove(obstaculo)
-        }
-
     }
 
     private fun hayColision(vista1: ImageView, vista2: ImageView): Boolean {
@@ -687,6 +701,7 @@ class Juego : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+
         detenerJuego()
 
         for(obstaculo in obstaculos){
@@ -772,15 +787,7 @@ class Juego : AppCompatActivity() {
 
     private fun iniciarTemporizador() {
         temporizadorActivo = true
-        val runnable = object : Runnable {
-            override fun run() {
-                if(temporizadorActivo) {
-                    tiempoDeJuego++
-                    handler.postDelayed(this, 1000)
-                }
-            }
-        }
-        handler.post(runnable)
+        handler.post(temporizadorRunnable)
     }
 
     private fun reiniciarContadores() {
