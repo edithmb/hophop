@@ -4,13 +4,10 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.AnimationDrawable
-import android.media.Image
 import android.os.Bundle
 import android.os.Looper
 import android.os.Handler
-import android.provider.Settings
 import android.util.Log
-import android.util.Log.e
 import android.view.View
 import android.view.Window
 import android.widget.Button
@@ -25,44 +22,34 @@ class Juego : AppCompatActivity() {
     private lateinit var txtPuntuacion: TextView
     private lateinit var txtNombreUsuario: TextView
     private lateinit var imgVidas: ImageView
-
     private var nombreUsuario: String = ""
-
     private var vidasActuales: Int = 3
     private var vidasMaximas = 3
-
     //variables de imagenes
     private lateinit var img: ImageView
     private lateinit var animalAnimation: AnimationDrawable
     private lateinit var fondo1: ImageView
     private lateinit var fondo2: ImageView
     private lateinit var layout: ConstraintLayout
-
     private val handler = Handler(Looper.getMainLooper())
-
-    private val intervaloFrame = 50L
     private var anchoFondo = 0
     private val obstaculos = mutableListOf<Obstaculo>()
     private val handlerObstaculos = Handler(Looper.getMainLooper())
     private var juegoActivo = false
     private var estaMoviendo = false
     private var puntuacion = 0
-
-
     //variables de salto
     private var velocidadVertical: Float = 0f
-    private val gravedad: Float = 1.2f
+    private val gravedad: Float = 1.3f
     private val fuerzaSalto: Float =-45f
-    private val posicionYSuelo: Float = 700f
+    private val posicionYSuelo: Float = 650f
     private var estaSaltando: Boolean = false
-
     //variables de velocidad
     private var velocidadScrollActual = 8f
     private val velocidadScrollMaxima = 20f
     private val incrementoVelocidad = 0.3f
     private var obstaculosGenerados = 0
     private val tiempoGeneracionObstaculos = 4000L
-
     //variables de manejo de datos JSON
     private lateinit var gameDataManager: GameDataManager
     private var animalNombre: String = "Desconocido"
@@ -72,8 +59,6 @@ class Juego : AppCompatActivity() {
     private var obstaculosEvitados = 0
     private var tiempoDeJuego = 0
     private var temporizadorActivo = false
-
-
 
     private var generadorObstaculos = object : Runnable {
         override fun run() {
@@ -121,14 +106,11 @@ class Juego : AppCompatActivity() {
         }
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_juego)
 
         gameDataManager = GameDataManager(this)
-
-
 
         layout = findViewById(R.id.juegolayout)
 
@@ -144,7 +126,6 @@ class Juego : AppCompatActivity() {
         nombreUsuario = sharedPref.getString("apodoJugador", "Jugador") ?: "Jugador"
         txtNombreUsuario.text = nombreUsuario
 
-
         val animalSeleccionado = intent.getIntExtra("animalSeleccionado", -1)
         val btnregresar = findViewById<Button>(R.id.btnRegresar)
         val txtviewprofileimage = findViewById<ImageView>(R.id.profile_image)
@@ -158,7 +139,6 @@ class Juego : AppCompatActivity() {
         params.topToTop = ConstraintLayout.LayoutParams.PARENT_ID
 
         img.layoutParams = params
-
 
         when (animalSeleccionado){
             R.id.tarjetaConejo -> {
@@ -197,11 +177,9 @@ class Juego : AppCompatActivity() {
             }
         }
 
-
         btnregresar.setOnClickListener {
             mostrarSalirJuego()
         }
-
         when (animalSeleccionado){
             R.id.tarjetaConejo -> txtviewprofileimage.setImageResource(R.drawable.conejo)
             R.id.tarjetaKoala -> txtviewprofileimage.setImageResource(R.drawable.koala)
@@ -211,7 +189,6 @@ class Juego : AppCompatActivity() {
 
         }
     }
-
     private fun resetearMetricas(){
         frutasComidas = 0
         verdurasComidas = 0
@@ -294,10 +271,6 @@ class Juego : AppCompatActivity() {
             }
         }
     }
-
-
-
-
     private fun generarObstaculo(){
         val obstaculoVista = ImageView(this)
 
@@ -372,13 +345,11 @@ class Juego : AppCompatActivity() {
                 0
             }
         }
-
         val nuevoObstaculo = Obstaculo(obstaculoVista, tipoElegido, puntos)
         obstaculos.add(nuevoObstaculo)
 
         layout.addView(obstaculoVista)
     }
-
     private fun moverObstaculos(){
         val iterator = obstaculos.iterator()
 
@@ -398,17 +369,19 @@ class Juego : AppCompatActivity() {
             }
         }
     }
-
     private fun hayColision(vista1: ImageView, vista2: ImageView): Boolean {
-         val x1 = vista1.x
-         val y1 = vista1.y
-         val ancho1 = vista1.width
-         val alto1 = vista1.height
+        //para que alcance a saltar
+        val margen = 0.15f
 
-         val x2 = vista2.x
-         val y2 = vista2.y
-         val ancho2 = vista2.width
-         val alto2 = vista2.height
+        val x1 = vista1.x + (vista1.width * margen)
+        val y1 = vista1.y + (vista1.height * margen)
+        val ancho1 = vista1.width * (1 - 2 * margen)
+        val alto1 = vista1.height * (1 - 2 * margen)
+
+        val x2 = vista2.x + (vista2.width * margen)
+        val y2 = vista2.y + (vista2.height * margen)
+        val ancho2 = vista2.width * (1 - 2 * margen)
+        val alto2 = vista2.height * (1 - 2 * margen)
 
         return x1 < x2 + ancho2 && x1 + ancho1 > x2 &&
                 y1 < y2 + alto2 && y1 + alto1 > y2
@@ -428,7 +401,6 @@ class Juego : AppCompatActivity() {
         }
 
     }
-
     private fun manejarColision(obstaculo: Obstaculo){
 
         when (obstaculo.tipo){
@@ -499,14 +471,9 @@ class Juego : AppCompatActivity() {
                 else {
                     mostrarDialogoGameOver()
                 }
-
-
-
             }
         }
-
     }
-
     private fun mostrarDialogoReintentar(){
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -528,15 +495,12 @@ class Juego : AppCompatActivity() {
             reiniciarRonda()
         }
 
-
         TVSalir?.setOnClickListener {
             dialog.dismiss()
             temporizadorActivo = false
             abandonarPartida()
         }
-
         dialog.show()
-
     }
     private fun mostrarDialogoGameOver() {
 
@@ -576,12 +540,12 @@ class Juego : AppCompatActivity() {
 
         btnSalir?.setOnClickListener {
             dialog.dismiss()
+            vidasActuales = vidasMaximas
+            reiniciarContadores()
             volverAlInicio()
         }
-
         dialog.show()
     }
-
     private fun reiniciarRonda() {
         for (obstaculo in obstaculos) {
             layout.removeView(obstaculo.vista)
@@ -602,27 +566,30 @@ class Juego : AppCompatActivity() {
     private fun abandonarPartida() {
         temporizadorActivo  = false
 
-//        try {
-//            val idJugador = nombreUsuario
-//            gameDataManager.guardarPartida(
-//                idJugador = idJugador,
-//                alias = nombreUsuario,
-//                animal = animalNombre,
-//                tiempo = tiempoDeJuego,
-//                puntos = puntuacion,
-//                frutas = frutasComidas,
-//                verduras = verdurasComidas,
-//                dulces = dulcesComidos,
-//                obstaculos = obstaculosEvitados,
-//                vidas = vidasMaximas - vidasActuales
-//            )
-//            Log.d("Juego", "Partida guardada al abandonar")
-//        } catch (e: Exception) {
-//            Log.e("Juego", "Error guardando partida: ${e.message}")
-//        }
+        try {
+            val idJugador = nombreUsuario
+            gameDataManager.guardarPartida(
+                idJugador = idJugador,
+                alias = nombreUsuario,
+                animal = animalNombre,
+                tiempo = tiempoDeJuego,
+                puntos = puntuacion,
+                frutas = frutasComidas,
+                verduras = verdurasComidas,
+                dulces = dulcesComidos,
+                obstaculos = obstaculosEvitados,
+                vidas = vidasMaximas - vidasActuales
+            )
+            Log.d("Juego", "Partida guardada al abandonar")
+        } catch (e: Exception) {
+            Log.e("Juego", "Error guardando partida: ${e.message}")
+        }
 
         puntuacion = 0
         vidasActuales = vidasMaximas
+        velocidadScrollActual = 8f
+        obstaculosGenerados = 0
+        reiniciarContadores()
 
         for (obstaculo in obstaculos) {
             layout.removeView(obstaculo.vista)
@@ -634,13 +601,11 @@ class Juego : AppCompatActivity() {
 
         volverAlInicio()
     }
-
     private fun volverAlInicio() {
         val intent = Intent(this, Inicio::class.java)
         startActivity(intent)
         finish()
     }
-
     private fun actualizarVidas(){
         val imagenVidas = when(vidasActuales){
             3 -> R.drawable.vida_3
@@ -652,20 +617,12 @@ class Juego : AppCompatActivity() {
 
         imgVidas.setImageResource(imagenVidas)
     }
-
     private fun perderVida(){
         vidasActuales--
 
         actualizarVidas()
 
     }
-
-    private fun gameOver(){
-        detenerJuego()
-        ocultarPanel()
-        mostrarDialogoGameOver()
-    }
-
     private fun moverFondo(){
 
         val displayMetrics = resources.displayMetrics
@@ -709,43 +666,12 @@ class Juego : AppCompatActivity() {
         }
         obstaculos.clear()
     }
-
-//    private fun mostrarDialogoReiniciar(){
-//        val dialog = Dialog(this)
-//        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-//        dialog.setCancelable(false)
-//        dialog.setContentView(R.layout.dialogo_reiniciar)
-//        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-//
-//        val IvReiniciar = dialog.findViewById<ImageView>(R.id.iVRegresar)
-//        val IvSalirJuego = dialog.findViewById<ImageView>(R.id.iVSalir)
-//
-//        val textoPuntuacion = dialog.findViewById<TextView>(R.id.textoPuntuacion)
-//        textoPuntuacion?.text = "Puntuacion: $puntuacion"
-//
-//        IvReiniciar.setOnClickListener {
-//            dialog.dismiss()
-//            reiniciarJuego()
-//        }
-//
-//        IvSalirJuego.setOnClickListener {
-//            dialog.dismiss()
-//            val intent = Intent(this, Inicio::class.java)
-//            startActivity(intent)
-//            finish()
-//        }
-//
-//        dialog.show()
-//
-//    }
-
     fun mostrarSalirJuego(){
 
         detenerJuego()
         ocultarPanel()
 
         temporizadorActivo = false
-
 
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -754,7 +680,6 @@ class Juego : AppCompatActivity() {
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         val btnSalirSIJ = dialog.findViewById<Button>(R.id.btnSalirSIJ)
         val btnSalirNOJ = dialog.findViewById<Button>(R.id.btnSalirNOJ)
-        val intent = Intent(this, Inicio::class.java)
 
         btnSalirSIJ?.setOnClickListener {
             dialog.dismiss()
@@ -769,27 +694,21 @@ class Juego : AppCompatActivity() {
             temporizadorActivo = true
             iniciarJuego()
         }
-
         dialog.show()
     }
-
     private fun actualizarPuntuacion(){
         txtPuntuacion.text = "Puntos\n$puntuacion"
     }
-
     private fun mostrarPanel(){
         panelSuperior.visibility = View.VISIBLE
     }
-
     private fun ocultarPanel(){
         panelSuperior.visibility = View.GONE
     }
-
     private fun iniciarTemporizador() {
         temporizadorActivo = true
         handler.post(temporizadorRunnable)
     }
-
     private fun reiniciarContadores() {
         frutasComidas = 0
         verdurasComidas = 0
@@ -798,4 +717,3 @@ class Juego : AppCompatActivity() {
         tiempoDeJuego = 0
     }
 }
-
