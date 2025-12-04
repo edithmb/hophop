@@ -1,7 +1,6 @@
 package com.example.hophop
 
 import android.content.Context
-import android.os.Build
 import android.util.Log
 import org.json.JSONArray
 import org.json.JSONObject
