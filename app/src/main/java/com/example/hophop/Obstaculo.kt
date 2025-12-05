@@ -4,8 +4,9 @@ import android.widget.ImageView
 
 data class Obstaculo (
     val vista: ImageView,
-    val tipo: TipoObstaculo,
-    val puntos: Int = 0
+    var tipo: TipoObstaculo,
+    var puntos: Int = 0,
+    var activo: Boolean = false
                      )
 
 enum class TipoObstaculo{

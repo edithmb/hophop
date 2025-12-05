@@ -38,18 +38,22 @@ class Juego : AppCompatActivity() {
     private var juegoActivo = false
     private var estaMoviendo = false
     private var puntuacion = 0
+    private val listaColisionesTemp = ArrayList<Obstaculo>()
     //variables de salto
     private var velocidadVertical: Float = 0f
-    private val gravedad: Float = 1.3f
+    private val gravedad: Float = 1.1f
     private val fuerzaSalto: Float =-45f
-    private val posicionYSuelo: Float = 650f
+    private var posicionYSuelo: Float = 0f
+    private var altoPantalla: Int = 0
+    private var anchoPantalla: Int = 0
     private var estaSaltando: Boolean = false
     //variables de velocidad
     private var velocidadScrollActual = 8f
-    private val velocidadScrollMaxima = 20f
-    private val incrementoVelocidad = 0.3f
+    private val velocidadScrollMaxima = 100f
+    private val incrementoVelocidad = 0.5f
     private var obstaculosGenerados = 0
-    private val tiempoGeneracionObstaculos = 4000L
+    private val tiempoGeneracionObstaculos = 3000L
+    private val segundosParaAumentarVelocidad = 5
     //variables de manejo de datos JSON
     private lateinit var gameDataManager: GameDataManager
     private var animalNombre: String = "Desconocido"
@@ -81,6 +85,17 @@ class Juego : AppCompatActivity() {
         override fun run() {
             if (temporizadorActivo){
                 tiempoDeJuego++
+
+                if (tiempoDeJuego > 0 && tiempoDeJuego % segundosParaAumentarVelocidad == 0) {
+                    // Aumenta la velocidad si no ha alcanzado el máximo
+                    if (velocidadScrollActual < velocidadScrollMaxima) {
+                        velocidadScrollActual += incrementoVelocidad
+                        // Opcional: para ver en la consola cómo aumenta
+                        Log.d("Juego", "Velocidad aumentada a: $velocidadScrollActual")
+                    }
+                }
+
+
                 handler.postDelayed(this, 1000)
             }
         }
@@ -110,6 +125,12 @@ class Juego : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_juego)
 
+        val displayMetrics = resources.displayMetrics
+        altoPantalla = displayMetrics.heightPixels
+        anchoPantalla = displayMetrics.widthPixels
+
+        posicionYSuelo = altoPantalla * 0.75f
+
         gameDataManager = GameDataManager(this)
 
         layout = findViewById(R.id.juegolayout)
@@ -118,6 +139,8 @@ class Juego : AppCompatActivity() {
         txtPuntuacion = findViewById(R.id.txtPuntuacion)
         txtNombreUsuario = findViewById(R.id.txtNombreUsuario)
         imgVidas = findViewById(R.id.imgVidas)
+
+        inicializarObstaculos()
 
         vidasActuales = vidasMaximas
         actualizarVidas()
@@ -189,15 +212,12 @@ class Juego : AppCompatActivity() {
 
         }
     }
-    private fun resetearMetricas(){
-        frutasComidas = 0
-        verdurasComidas = 0
-        dulcesComidos = 0
-        obstaculosEvitados = 0
-
-    }
-
     private fun iniciarJuego(){
+
+        handlerObstaculos.removeCallbacks(generadorObstaculos)
+        handler.removeCallbacks(movimientoRunnable)
+        handler.removeCallbacks(verificadorColisiones)
+
         animalAnimation.start()
         estaMoviendo = true
         handler.post(movimientoRunnable)
@@ -208,14 +228,49 @@ class Juego : AppCompatActivity() {
         handler.post(verificadorColisiones)
     }
 
+    private fun inicializarObstaculos(){
+
+        // crea 10 obstaculos y los deja "escondidos"
+        for (i in 0 until 10){
+            val obstaculoVista = ImageView(this)
+            val params = ConstraintLayout.LayoutParams(250,200)
+            obstaculoVista.layoutParams = params
+
+           //fuera de la pantalla
+            obstaculoVista.x = -500f
+            obstaculoVista.y = posicionYSuelo
+            obstaculoVista.visibility = View.INVISIBLE
+            layout.addView(obstaculoVista)
+
+
+            //objeto de datos desactivado
+            val nuevoObstaculo = Obstaculo(
+                vista = obstaculoVista,
+                tipo = TipoObstaculo.arbusto,
+                puntos = 0,
+                activo = false
+            )
+
+            obstaculoVista.translationZ = 10f
+            
+            obstaculos.add(nuevoObstaculo)
+
+
+        }
+
+
+
+    }
+
     private fun reiniciarJuego(){
         detenerJuego()
 
         for(obstaculo in obstaculos){
-            layout.removeView(obstaculo.vista)
+            obstaculo.activo = false
+            obstaculo.vista.visibility = View.INVISIBLE
+            obstaculo.vista.x = -1000f
         }
 
-        obstaculos.clear()
 
         puntuacion = 0
 
@@ -272,21 +327,18 @@ class Juego : AppCompatActivity() {
         }
     }
     private fun generarObstaculo(){
-        val obstaculoVista = ImageView(this)
-
-        val params = ConstraintLayout.LayoutParams(250,200)
-        obstaculoVista.layoutParams = params
+        //buscar el primer libre
+        val obstaculo = obstaculos.firstOrNull { !it.activo }
+        // si noy libres solo salir
+        if (obstaculo == null) return
 
         val displayMetrics = resources.displayMetrics
-        obstaculoVista.x = displayMetrics.widthPixels.toFloat()
-
-        //aumentar velocidad
-        obstaculosGenerados++
-        if(obstaculosGenerados % 15 == 0 && velocidadScrollActual < velocidadScrollMaxima){
-            velocidadScrollActual += incrementoVelocidad
-        }
+        obstaculo.vista.x = displayMetrics.widthPixels.toFloat()
+        obstaculo.vista.visibility = View.VISIBLE
+        obstaculo.activo = true
 
         val random = (0..100).random()
+
 
         val tipoElegido = when {
             random < 35 -> TipoObstaculo.fruta
@@ -294,21 +346,15 @@ class Juego : AppCompatActivity() {
             random < 85 -> TipoObstaculo.dulce
             else -> TipoObstaculo.arbusto
         }
+        obstaculo.tipo = tipoElegido
 
         val posicionesY = when (tipoElegido){
-            TipoObstaculo.arbusto -> {
-                posicionYSuelo
-            }
-            else -> {
-                val posicionesDisponibles = listOf(
-                    550f,
-                    650f,
-                    posicionYSuelo)
-                posicionesDisponibles.random()
-            }
+            TipoObstaculo.arbusto -> posicionYSuelo
+            else -> listOf(posicionYSuelo - 400f, posicionYSuelo - 250f).random()
+
         }
 
-        obstaculoVista.y = posicionesY
+        obstaculo.vista.y = posicionesY
 
         val puntos = when (tipoElegido) {
 
@@ -317,7 +363,7 @@ class Juego : AppCompatActivity() {
                     R.drawable.manzana,
                     R.drawable.naranja,
                     R.drawable.fresa )
-                obstaculoVista.setImageResource(frutas.random())
+                obstaculo.vista.setImageResource(frutas.random())
                 1
             }
 
@@ -327,7 +373,7 @@ class Juego : AppCompatActivity() {
                     R.drawable.zanahoria,
                     R.drawable.calabaza
                                      )
-                obstaculoVista.setImageResource(verduras.random())
+                obstaculo.vista.setImageResource(verduras.random())
                 2
             }
 
@@ -336,36 +382,35 @@ class Juego : AppCompatActivity() {
                     R.drawable.paleta,
                     R.drawable.caramelo,
                     R.drawable.chocolate )
-                obstaculoVista.setImageResource(dulces.random())
+                obstaculo.vista.setImageResource(dulces.random())
                 -1
             }
 
             TipoObstaculo.arbusto -> {
-                obstaculoVista.setBackgroundResource(R.drawable.arbusto)
+                obstaculo.vista.setImageResource(R.drawable.arbusto)
                 0
             }
         }
-        val nuevoObstaculo = Obstaculo(obstaculoVista, tipoElegido, puntos)
-        obstaculos.add(nuevoObstaculo)
-
-        layout.addView(obstaculoVista)
+        obstaculo.puntos = puntos
     }
     private fun moverObstaculos(){
-        val iterator = obstaculos.iterator()
 
-        while (iterator.hasNext()){
-            val obstaculo = iterator.next()
+        for (obstaculo in obstaculos){
+            // solo se mueven los activos
+            if (obstaculo.activo){
+                obstaculo.vista.x -= velocidadScrollActual
 
-            obstaculo.vista.x -= velocidadScrollActual
+                if(obstaculo.vista.x + obstaculo.vista.width < 0){
 
-            if(obstaculo.vista.x + obstaculo.vista.width < 0){
+                    if(obstaculo.tipo == TipoObstaculo.arbusto){
+                        obstaculosEvitados++
+                    }
 
-                if(obstaculo.tipo == TipoObstaculo.arbusto){
-                    obstaculosEvitados++
+                    // desactivar y mandar lejos
+                    obstaculo.activo = false
+                    obstaculo.vista.visibility = View.INVISIBLE
+                    obstaculo.vista.x = -1000f
                 }
-
-                layout.removeView(obstaculo.vista)
-                iterator.remove()
             }
         }
     }
@@ -389,14 +434,15 @@ class Juego : AppCompatActivity() {
 
     private fun verificarColisiones(){
 
-        val obstaculosColisionados = mutableListOf<Obstaculo>()
+        listaColisionesTemp.clear()
+
          for(obstaculo in obstaculos){
-             if (hayColision(img,obstaculo.vista)){
-                 obstaculosColisionados.add(obstaculo)
+             if (obstaculo.vista.visibility == View.VISIBLE && hayColision(img, obstaculo.vista)){
+                 listaColisionesTemp.add(obstaculo)
              }
          }
 
-        for (obstaculo in obstaculosColisionados){
+        for (obstaculo in listaColisionesTemp){
             manejarColision(obstaculo)
         }
 
@@ -411,8 +457,9 @@ class Juego : AppCompatActivity() {
 
                 actualizarPuntuacion()
 
-                layout.removeView(obstaculo.vista)
-                obstaculos.remove(obstaculo)
+                obstaculo.activo = false
+                obstaculo.vista.visibility = View.INVISIBLE
+                obstaculo.vista.x = -1000f
             }
 
             TipoObstaculo.verdura -> {
@@ -422,8 +469,9 @@ class Juego : AppCompatActivity() {
 
                 actualizarPuntuacion()
 
-                layout.removeView(obstaculo.vista)
-                obstaculos.remove(obstaculo)
+                obstaculo.activo = false
+                obstaculo.vista.visibility = View.INVISIBLE
+                obstaculo.vista.x = -1000f
             }
             TipoObstaculo.dulce -> {
                 dulcesComidos++
@@ -432,14 +480,18 @@ class Juego : AppCompatActivity() {
 
                 actualizarPuntuacion()
 
+
                 if (puntuacion < 0){
                     puntuacion = 0
                     actualizarPuntuacion()
+
+                    obstaculo.activo = false
+                    obstaculo.vista.visibility = View.INVISIBLE
+                    obstaculo.vista.x = -1000f
+
                     detenerJuego()
                     ocultarPanel()
-
                     temporizadorActivo = false
-
                     perderVida()
 
                     if (vidasActuales > 0) {
@@ -451,18 +503,20 @@ class Juego : AppCompatActivity() {
 
                 }
 
-                layout.removeView(obstaculo.vista)
-                obstaculos.remove(obstaculo)
+                obstaculo.activo = false
+                obstaculo.vista.visibility = View.INVISIBLE
+                obstaculo.vista.x = -1000f
             }
             TipoObstaculo.arbusto -> {
-                layout.removeView(obstaculo.vista)
-                obstaculos.remove(obstaculo)
+                obstaculo.activo = false
+                obstaculo.vista.visibility = View.INVISIBLE
+                obstaculo.vista.x = -1000f
+
 
                 detenerJuego()
                 ocultarPanel()
 
                 temporizadorActivo = false
-
                 perderVida()
 
                 if (vidasActuales > 0){
@@ -547,11 +601,11 @@ class Juego : AppCompatActivity() {
         dialog.show()
     }
     private fun reiniciarRonda() {
-        for (obstaculo in obstaculos) {
-            layout.removeView(obstaculo.vista)
+        for(obstaculo in obstaculos){
+            obstaculo.activo = false
+            obstaculo.vista.visibility = View.INVISIBLE
+            obstaculo.vista.x = -1000f
         }
-        obstaculos.clear()
-
         // Resetear la posición del animal
         img.y = posicionYSuelo
 
@@ -584,21 +638,6 @@ class Juego : AppCompatActivity() {
         } catch (e: Exception) {
             Log.e("Juego", "Error guardando partida: ${e.message}")
         }
-
-        puntuacion = 0
-        vidasActuales = vidasMaximas
-        velocidadScrollActual = 8f
-        obstaculosGenerados = 0
-        reiniciarContadores()
-
-        for (obstaculo in obstaculos) {
-            layout.removeView(obstaculo.vista)
-        }
-        obstaculos.clear()
-
-        velocidadVertical = 0f
-        estaSaltando = false
-
         volverAlInicio()
     }
     private fun volverAlInicio() {
@@ -658,13 +697,8 @@ class Juego : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-
         detenerJuego()
 
-        for(obstaculo in obstaculos){
-            layout.removeView(obstaculo.vista)
-        }
-        obstaculos.clear()
     }
     fun mostrarSalirJuego(){
 

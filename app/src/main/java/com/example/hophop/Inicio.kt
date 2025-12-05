@@ -54,7 +54,7 @@ class Inicio : AppCompatActivity() {
         }
 
         btnVerMetricas.setOnClickListener {
-//            val intent = Intent(this, Metricas::class.java)
+            val intent = Intent(this, MetricasActivity::class.java)
             startActivity(intent)
 
         }
