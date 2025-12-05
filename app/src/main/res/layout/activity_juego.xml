@@ -92,6 +92,5 @@
             app:backgroundTint="@color/RojoPastel"/>
     </LinearLayout>
 
-    <!-- Aquí irá el resto del juego (fondo, animal, obstáculos) -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

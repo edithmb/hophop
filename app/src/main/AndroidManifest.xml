@@ -16,6 +16,10 @@
             android:exported="false"
             android:screenOrientation="landscape"/>
         <activity
+            android:name=".MetricasActivity"
+            android:exported="false"
+            android:screenOrientation="landscape"/>
+        <activity
             android:name=".Juego"
             android:exported="false"
             android:screenOrientation="landscape"/>
@@ -33,10 +37,6 @@
             android:screenOrientation="landscape"/>
         <activity
             android:name=".Loginpart2"
-            android:exported="false"
-            android:screenOrientation="landscape"/>
-        <activity
-            android:name=".Ranking"
             android:exported="false"
             android:screenOrientation="landscape"/>
         <activity
