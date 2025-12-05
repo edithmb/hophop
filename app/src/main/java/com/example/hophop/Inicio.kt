@@ -22,9 +22,16 @@ class Inicio : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_inicio)
 
+        drawerLayout = findViewById(R.id.drawerLayoutInicio)
+
         val btnEmpezar = findViewById<Button>(R.id.btnEmpezar)
         val btnSalirI = findViewById<Button>(R.id.btnSalirI)
         val ajustes = findViewById<ImageView>(R.id.ImageViewAjustes)
+
+        val btnCerrarMenu = findViewById<Button>(R.id.btnCerrarMenu)
+        val btnVerMetricas = findViewById<Button>(R.id.btnVerMetricas)
+
+
 
         btnEmpezar.setOnClickListener {
             val intent = Intent(this, Login::class.java)
@@ -40,6 +47,16 @@ class Inicio : AppCompatActivity() {
             if (!drawerLayout.isDrawerOpen(GravityCompat.END)){
                 drawerLayout.openDrawer(GravityCompat.END)
             }
+        }
+
+        btnCerrarMenu.setOnClickListener {
+            drawerLayout.closeDrawer(GravityCompat.END)
+        }
+
+        btnVerMetricas.setOnClickListener {
+//            val intent = Intent(this, Metricas::class.java)
+            startActivity(intent)
+
         }
 
     }
