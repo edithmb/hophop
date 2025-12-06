@@ -105,7 +105,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="end"
         android:orientation="vertical"
-        android:background="#FFFFFF"
+        android:background="#CEF0FF"
         android:padding="24dp"
         android:clickable="true"
         android:focusable="true">
@@ -114,8 +114,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Ajustes"
-            android:fontFamily="@font/chewyregular"
-            android:textColor="#333333"
+            android:fontFamily="@font/fredokabold"
+            android:textColor="@color/LetraMarron"
             android:textSize="40sp"
             android:gravity="center"
             android:layout_marginBottom="30dp"/>
@@ -124,7 +124,8 @@
             android:id="@+id/btnVerMetricas"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Ver Mètriques"
+            android:text="Ver Metricas"
+            app:backgroundTint="@color/NaranjaPastel"
             android:fontFamily="@font/patrickhandregular"
             android:textSize="20sp"/>
 
@@ -133,6 +134,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Música"
+            android:textColor="@color/LetraMarron"
             android:textSize="20sp"
             android:layout_marginTop="20dp"
             android:fontFamily="@font/patrickhandregular"/>
@@ -146,9 +148,10 @@
             android:id="@+id/btnCerrarMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Cerrar Menú"
-            android:fontFamily="@font/patrickhandregular"
-            app:backgroundTint="@color/NaranjaPastel"/>
+            android:text="Cerrar"
+            android:textSize="20sp"
+            app:backgroundTint="@color/RojoPastel"
+            android:fontFamily="@font/patrickhandregular" />
 
     </LinearLayout>
 
