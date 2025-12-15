@@ -34,6 +34,11 @@ class Juego : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
     private var anchoFondo = 0
     private val obstaculos = mutableListOf<Obstaculo>()
+
+    private val listaAlturasVuelo = listOf(-400f, -250f)
+    private val listaFrutas = listOf(R.drawable.manzana, R.drawable.naranja, R.drawable.fresa)
+    private val listaVerduras = listOf(R.drawable.brocoli, R.drawable.zanahoria, R.drawable.calabaza)
+    private val listaDulces = listOf(R.drawable.paleta, R.drawable.caramelo, R.drawable.chocolate)
     private val handlerObstaculos = Handler(Looper.getMainLooper())
     private var juegoActivo = false
     private var estaMoviendo = false
@@ -72,14 +77,6 @@ class Juego : AppCompatActivity() {
             }
         }
     }
-    private var verificadorColisiones = object : Runnable {
-        override fun run() {
-            if (juegoActivo){
-                verificarColisiones()
-                handler.postDelayed(this,16)
-            }
-        }
-    }
 
     private val temporizadorRunnable = object: Runnable {
         override fun run() {
@@ -115,6 +112,7 @@ class Juego : AppCompatActivity() {
 
                 moverObstaculos()
                 aplicarGravedad()
+                verificarColisiones()
 
                 handler.postDelayed(this,16)
             }
@@ -216,7 +214,6 @@ class Juego : AppCompatActivity() {
 
         handlerObstaculos.removeCallbacks(generadorObstaculos)
         handler.removeCallbacks(movimientoRunnable)
-        handler.removeCallbacks(verificadorColisiones)
 
         animalAnimation.start()
         estaMoviendo = true
@@ -225,7 +222,6 @@ class Juego : AppCompatActivity() {
         juegoActivo = true
         handlerObstaculos.post(generadorObstaculos)
 
-        handler.post(verificadorColisiones)
     }
 
     private fun inicializarObstaculos(){
@@ -296,7 +292,6 @@ class Juego : AppCompatActivity() {
         }
 
         handler.removeCallbacks(movimientoRunnable)
-        handler.removeCallbacks(verificadorColisiones)
         handler.removeCallbacks(temporizadorRunnable)
         handlerObstaculos.removeCallbacks(generadorObstaculos)
     }
@@ -329,15 +324,19 @@ class Juego : AppCompatActivity() {
     private fun generarObstaculo(){
         //buscar el primer libre
         val obstaculo = obstaculos.firstOrNull { !it.activo }
-        // si noy libres solo salir
         if (obstaculo == null) return
 
-        val displayMetrics = resources.displayMetrics
-        obstaculo.vista.x = displayMetrics.widthPixels.toFloat()
+        obstaculo.vista.x = anchoPantalla.toFloat()
         obstaculo.vista.visibility = View.VISIBLE
         obstaculo.activo = true
 
-        val random = (0..100).random()
+        obstaculosGenerados++
+
+        if (obstaculosGenerados % 15 == 0 && velocidadScrollActual < velocidadScrollMaxima) {
+            velocidadScrollActual += incrementoVelocidad
+        }
+
+        val random = kotlin.random.Random.nextInt(0, 101)
 
 
         val tipoElegido = when {
@@ -350,7 +349,7 @@ class Juego : AppCompatActivity() {
 
         val posicionesY = when (tipoElegido){
             TipoObstaculo.arbusto -> posicionYSuelo
-            else -> listOf(posicionYSuelo - 400f, posicionYSuelo - 250f).random()
+            else ->(posicionYSuelo + listaAlturasVuelo.random())
 
         }
 
@@ -358,31 +357,15 @@ class Juego : AppCompatActivity() {
 
         val puntos = when (tipoElegido) {
 
-            TipoObstaculo.fruta -> {
-                val frutas = listOf(
-                    R.drawable.manzana,
-                    R.drawable.naranja,
-                    R.drawable.fresa )
-                obstaculo.vista.setImageResource(frutas.random())
+            TipoObstaculo.fruta -> { obstaculo.vista.setImageResource(listaFrutas.random())
                 1
             }
 
-            TipoObstaculo.verdura ->{
-                val verduras = listOf(
-                    R.drawable.brocoli,
-                    R.drawable.zanahoria,
-                    R.drawable.calabaza
-                                     )
-                obstaculo.vista.setImageResource(verduras.random())
+            TipoObstaculo.verdura ->{ obstaculo.vista.setImageResource(listaVerduras.random())
                 2
             }
 
-            TipoObstaculo.dulce -> {
-                val dulces = listOf(
-                    R.drawable.paleta,
-                    R.drawable.caramelo,
-                    R.drawable.chocolate )
-                obstaculo.vista.setImageResource(dulces.random())
+            TipoObstaculo.dulce -> { obstaculo.vista.setImageResource(listaDulces.random())
                 -1
             }
 
@@ -432,20 +415,18 @@ class Juego : AppCompatActivity() {
                 y1 < y2 + alto2 && y1 + alto1 > y2
     }
 
-    private fun verificarColisiones(){
+    private fun verificarColisiones() {
 
-        listaColisionesTemp.clear()
+        for (obstaculo in obstaculos) {
 
-         for(obstaculo in obstaculos){
-             if (obstaculo.vista.visibility == View.VISIBLE && hayColision(img, obstaculo.vista)){
-                 listaColisionesTemp.add(obstaculo)
-             }
-         }
-
-        for (obstaculo in listaColisionesTemp){
-            manejarColision(obstaculo)
+            if (obstaculo.activo && obstaculo.vista.x < (img.x + img.width) &&
+                obstaculo.vista.x > (img.x - obstaculo.vista.width)) {
+                if (hayColision(img, obstaculo.vista)) {
+                    manejarColision(obstaculo)
+                    if (!juegoActivo) break
+                }
+            }
         }
-
     }
     private fun manejarColision(obstaculo: Obstaculo){
 
