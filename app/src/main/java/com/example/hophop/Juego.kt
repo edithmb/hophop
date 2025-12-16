@@ -11,6 +11,7 @@ import android.util.Log
 import android.view.View
 import android.view.Window
 import android.widget.Button
+import android.widget.FrameLayout // IMPORTANTE
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -25,26 +26,25 @@ class Juego : AppCompatActivity() {
     private var nombreUsuario: String = ""
     private var vidasActuales: Int = 3
     private var vidasMaximas = 3
-    //variables de imagenes
+
+    // VARIABLES GRÁFICAS
     private lateinit var img: ImageView
     private lateinit var animalAnimation: AnimationDrawable
     private lateinit var fondo1: ImageView
     private lateinit var fondo2: ImageView
-    private lateinit var layout: ConstraintLayout
+
+    //FrameLayout como contenedor rápido
+    private lateinit var contenedorJuego: FrameLayout
+
     private val handler = Handler(Looper.getMainLooper())
     private var anchoFondo = 0
     private val obstaculos = mutableListOf<Obstaculo>()
-
-    private val listaAlturasVuelo = listOf(-400f, -250f)
-    private val listaFrutas = listOf(R.drawable.manzana, R.drawable.naranja, R.drawable.fresa)
-    private val listaVerduras = listOf(R.drawable.brocoli, R.drawable.zanahoria, R.drawable.calabaza)
-    private val listaDulces = listOf(R.drawable.paleta, R.drawable.caramelo, R.drawable.chocolate)
     private val handlerObstaculos = Handler(Looper.getMainLooper())
     private var juegoActivo = false
     private var estaMoviendo = false
     private var puntuacion = 0
-    private val listaColisionesTemp = ArrayList<Obstaculo>()
-    //variables de salto
+
+    // Variables de física
     private var velocidadVertical: Float = 0f
     private val gravedad: Float = 1.1f
     private val fuerzaSalto: Float =-45f
@@ -52,14 +52,16 @@ class Juego : AppCompatActivity() {
     private var altoPantalla: Int = 0
     private var anchoPantalla: Int = 0
     private var estaSaltando: Boolean = false
-    //variables de velocidad
+
+    // Variables de velocidad
     private var velocidadScrollActual = 8f
     private val velocidadScrollMaxima = 100f
     private val incrementoVelocidad = 0.5f
     private var obstaculosGenerados = 0
     private val tiempoGeneracionObstaculos = 3000L
     private val segundosParaAumentarVelocidad = 5
-    //variables de manejo de datos JSON
+
+    // Datos
     private lateinit var gameDataManager: GameDataManager
     private var animalNombre: String = "Desconocido"
     private var frutasComidas = 0
@@ -69,11 +71,40 @@ class Juego : AppCompatActivity() {
     private var tiempoDeJuego = 0
     private var temporizadorActivo = false
 
+    //Listas precargadas para no saturar la memoria
+    private val listaFrutas = listOf(R.drawable.manzana, R.drawable.naranja, R.drawable.fresa)
+    private val listaVerduras = listOf(R.drawable.brocoli, R.drawable.zanahoria, R.drawable.calabaza)
+    private val listaDulces = listOf(R.drawable.paleta, R.drawable.caramelo, R.drawable.chocolate)
+    private val alturasVuelo = listOf(400f, 250f)
+
     private var generadorObstaculos = object : Runnable {
         override fun run() {
             if (juegoActivo){
                 generarObstaculo()
-                handlerObstaculos.postDelayed(this,tiempoGeneracionObstaculos)
+                handlerObstaculos.postDelayed(this, tiempoGeneracionObstaculos)
+            }
+        }
+    }
+
+    //Bucle unificado (Movimiento + Colisiones + Gravedad)
+    private var movimientoRunnable = object : Runnable {
+        override fun run() {
+            if (estaMoviendo){
+                //Mover Fondo
+                fondo1.x -= velocidadScrollActual
+                fondo2.x -= velocidadScrollActual
+
+                if (fondo1.x + anchoFondo <= 0) fondo1.x = fondo2.x + anchoFondo
+                if (fondo2.x + anchoFondo <= 0) fondo2.x = fondo1.x + anchoFondo
+
+                //Mover Obstáculos y Gravedad
+                moverObstaculos()
+                aplicarGravedad()
+
+                //Verificar Colisiones
+                verificarColisiones()
+
+                handler.postDelayed(this, 16) // ~60 FPS
             }
         }
     }
@@ -82,39 +113,12 @@ class Juego : AppCompatActivity() {
         override fun run() {
             if (temporizadorActivo){
                 tiempoDeJuego++
-
                 if (tiempoDeJuego > 0 && tiempoDeJuego % segundosParaAumentarVelocidad == 0) {
-                    // Aumenta la velocidad si no ha alcanzado el máximo
                     if (velocidadScrollActual < velocidadScrollMaxima) {
                         velocidadScrollActual += incrementoVelocidad
-                        // Opcional: para ver en la consola cómo aumenta
-                        Log.d("Juego", "Velocidad aumentada a: $velocidadScrollActual")
                     }
                 }
-
-
                 handler.postDelayed(this, 1000)
-            }
-        }
-    }
-    private var movimientoRunnable = object : Runnable {
-        override fun run() {
-            if (estaMoviendo){
-                fondo1.x -= velocidadScrollActual
-                fondo2.x -= velocidadScrollActual
-
-                if (fondo1.x + anchoFondo <= 0) {
-                    fondo1.x = fondo2.x + anchoFondo
-                }
-                if (fondo2.x + anchoFondo <= 0) {
-                    fondo2.x = fondo1.x + anchoFondo
-                }
-
-                moverObstaculos()
-                aplicarGravedad()
-                verificarColisiones()
-
-                handler.postDelayed(this,16)
             }
         }
     }
@@ -123,21 +127,23 @@ class Juego : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_juego)
 
+        // Inicializar contenedor optimizado
+        contenedorJuego = findViewById(R.id.contenedorJuego)
+
         val displayMetrics = resources.displayMetrics
         altoPantalla = displayMetrics.heightPixels
         anchoPantalla = displayMetrics.widthPixels
-
         posicionYSuelo = altoPantalla * 0.75f
 
         gameDataManager = GameDataManager(this)
-
-        layout = findViewById(R.id.juegolayout)
 
         panelSuperior = findViewById(R.id.panelSuperior)
         txtPuntuacion = findViewById(R.id.txtPuntuacion)
         txtNombreUsuario = findViewById(R.id.txtNombreUsuario)
         imgVidas = findViewById(R.id.imgVidas)
 
+        // Fondo y obstáculos se añaden al FrameLayout (contenedorJuego)
+        moverFondo()
         inicializarObstaculos()
 
         vidasActuales = vidasMaximas
@@ -151,67 +157,64 @@ class Juego : AppCompatActivity() {
         val btnregresar = findViewById<Button>(R.id.btnRegresar)
         val txtviewprofileimage = findViewById<ImageView>(R.id.profile_image)
 
-        moverFondo()
-
+        // Configurar Jugador
         img = ImageView(this)
-        val params = ConstraintLayout.LayoutParams(300, 300)
-        img.y= posicionYSuelo  // posición Y
-        params.startToStart = ConstraintLayout.LayoutParams.PARENT_ID
-        params.topToTop = ConstraintLayout.LayoutParams.PARENT_ID
-
+        val params = FrameLayout.LayoutParams(300, 300)
+        img.y = posicionYSuelo
         img.layoutParams = params
+        img.translationZ = 20f // Capa superior
 
         when (animalSeleccionado){
-            R.id.tarjetaConejo -> {
-                img.setBackgroundResource(R.drawable.conejo_animation)
-                animalNombre = "conejo"
-            }
-            R.id.tarjetaKoala -> {
-                img.setBackgroundResource(R.drawable.koala_animation)
-                animalNombre = "Koala"
-            }
-            R.id.tarjetaZorro -> {
-                img.setBackgroundResource(R.drawable.zorro_animation)
-                animalNombre = "Zorro"
-            }
-            R.id.tarjetaGato -> {
-                img.setBackgroundResource(R.drawable.gato_animation)
-                animalNombre = "Gato"
-            }
-            R.id.tarjetaDinosaurio-> {
-                img.setBackgroundResource(R.drawable.dinosaurio_animation)
-                animalNombre = "Dinosaurio"
-            }
+            R.id.tarjetaConejo -> { img.setBackgroundResource(R.drawable.conejo_animation); animalNombre = "conejo" }
+            R.id.tarjetaKoala -> { img.setBackgroundResource(R.drawable.koala_animation); animalNombre = "Koala" }
+            R.id.tarjetaZorro -> { img.setBackgroundResource(R.drawable.zorro_animation); animalNombre = "Zorro" }
+            R.id.tarjetaGato -> { img.setBackgroundResource(R.drawable.gato_animation); animalNombre = "Gato" }
+            R.id.tarjetaDinosaurio -> { img.setBackgroundResource(R.drawable.dinosaurio_animation); animalNombre = "Dinosaurio" }
         }
 
         animalAnimation = img.background as AnimationDrawable
-        layout.addView(img)
+        contenedorJuego.addView(img)
 
-        layout.setOnClickListener {
+        fondo1.setLayerType(View.LAYER_TYPE_HARDWARE, null)
+        fondo2.setLayerType(View.LAYER_TYPE_HARDWARE, null)
+
+        img.setLayerType(View.LAYER_TYPE_HARDWARE, null)
+
+        for (obstaculo in obstaculos) {
+            obstaculo.vista.setLayerType(View.LAYER_TYPE_HARDWARE, null)
+        }
+
+        // Click en cualquier parte del FrameLayout salta
+        contenedorJuego.setOnClickListener {
             if (!animalAnimation.isRunning) {
                 reiniciarContadores()
                 iniciarTemporizador()
                 iniciarJuego()
-            }
-            else {
+            } else {
                 saltar()
             }
         }
 
-        btnregresar.setOnClickListener {
-            mostrarSalirJuego()
+        // Listener original por si acaso tocan fuera
+        findViewById<View>(R.id.juegolayout).setOnClickListener {
+            if (juegoActivo) saltar()
         }
-        when (animalSeleccionado){
-            R.id.tarjetaConejo -> txtviewprofileimage.setImageResource(R.drawable.conejo)
-            R.id.tarjetaKoala -> txtviewprofileimage.setImageResource(R.drawable.koala)
-            R.id.tarjetaZorro -> txtviewprofileimage.setImageResource(R.drawable.zorro)
-            R.id.tarjetaGato -> txtviewprofileimage.setImageResource(R.drawable.gato)
-            R.id.tarjetaDinosaurio-> txtviewprofileimage.setImageResource(R.drawable.dinosaurio)
 
+        btnregresar.setOnClickListener { mostrarSalirJuego() }
+
+        // Cargar icono perfil
+        val resourceId = when (animalSeleccionado){
+            R.id.tarjetaConejo -> R.drawable.conejo
+            R.id.tarjetaKoala -> R.drawable.koala
+            R.id.tarjetaZorro -> R.drawable.zorro
+            R.id.tarjetaGato -> R.drawable.gato
+            R.id.tarjetaDinosaurio-> R.drawable.dinosaurio
+            else -> R.drawable.conejo
         }
+        txtviewprofileimage.setImageResource(resourceId)
     }
-    private fun iniciarJuego(){
 
+    private fun iniciarJuego(){
         handlerObstaculos.removeCallbacks(generadorObstaculos)
         handler.removeCallbacks(movimientoRunnable)
 
@@ -221,55 +224,38 @@ class Juego : AppCompatActivity() {
 
         juegoActivo = true
         handlerObstaculos.post(generadorObstaculos)
-
     }
 
     private fun inicializarObstaculos(){
-
-        // crea 10 obstaculos y los deja "escondidos"
         for (i in 0 until 10){
             val obstaculoVista = ImageView(this)
-            val params = ConstraintLayout.LayoutParams(250,200)
+            val params = FrameLayout.LayoutParams(250, 200)
             obstaculoVista.layoutParams = params
 
-           //fuera de la pantalla
             obstaculoVista.x = -500f
             obstaculoVista.y = posicionYSuelo
             obstaculoVista.visibility = View.INVISIBLE
-            layout.addView(obstaculoVista)
 
+            contenedorJuego.addView(obstaculoVista)
 
-            //objeto de datos desactivado
             val nuevoObstaculo = Obstaculo(
                 vista = obstaculoVista,
                 tipo = TipoObstaculo.arbusto,
                 puntos = 0,
                 activo = false
             )
-
-            obstaculoVista.translationZ = 10f
-            
             obstaculos.add(nuevoObstaculo)
-
-
         }
-
-
-
     }
 
     private fun reiniciarJuego(){
         detenerJuego()
-
         for(obstaculo in obstaculos){
             obstaculo.activo = false
             obstaculo.vista.visibility = View.INVISIBLE
             obstaculo.vista.x = -1000f
         }
-
-
         puntuacion = 0
-
         velocidadScrollActual = 8f
         obstaculosGenerados = 0
         velocidadVertical = 0f
@@ -278,7 +264,6 @@ class Juego : AppCompatActivity() {
         actualizarPuntuacion()
         mostrarPanel()
         img.y = posicionYSuelo
-
         iniciarJuego()
     }
 
@@ -290,7 +275,6 @@ class Juego : AppCompatActivity() {
         if(animalAnimation.isRunning){
             animalAnimation.stop()
         }
-
         handler.removeCallbacks(movimientoRunnable)
         handler.removeCallbacks(temporizadorRunnable)
         handlerObstaculos.removeCallbacks(generadorObstaculos)
@@ -299,11 +283,7 @@ class Juego : AppCompatActivity() {
     private fun saltar(){
         if(!estaSaltando){
             velocidadVertical = fuerzaSalto
-
             estaSaltando = true
-        }
-        else {
-            print("ya esta saltando")
         }
     }
 
@@ -311,9 +291,6 @@ class Juego : AppCompatActivity() {
         if (estaSaltando){
             velocidadVertical += gravedad
             img.y += velocidadVertical
-
-
-            //verifica si toco el suelo
             if (img.y >= posicionYSuelo){
                 img.y = posicionYSuelo
                 velocidadVertical = 0f
@@ -321,23 +298,17 @@ class Juego : AppCompatActivity() {
             }
         }
     }
+
+    //Generación sin crear basura (Garbage Collection)
     private fun generarObstaculo(){
-        //buscar el primer libre
-        val obstaculo = obstaculos.firstOrNull { !it.activo }
-        if (obstaculo == null) return
+        val obstaculo = obstaculos.firstOrNull { !it.activo } ?: return
 
         obstaculo.vista.x = anchoPantalla.toFloat()
         obstaculo.vista.visibility = View.VISIBLE
         obstaculo.activo = true
-
         obstaculosGenerados++
 
-        if (obstaculosGenerados % 15 == 0 && velocidadScrollActual < velocidadScrollMaxima) {
-            velocidadScrollActual += incrementoVelocidad
-        }
-
         val random = kotlin.random.Random.nextInt(0, 101)
-
 
         val tipoElegido = when {
             random < 35 -> TipoObstaculo.fruta
@@ -347,28 +318,34 @@ class Juego : AppCompatActivity() {
         }
         obstaculo.tipo = tipoElegido
 
-        val posicionesY = when (tipoElegido){
-            TipoObstaculo.arbusto -> posicionYSuelo
-            else ->(posicionYSuelo + listaAlturasVuelo.random())
-
+        // Z-Index y Escala por tipo
+        if (tipoElegido == TipoObstaculo.arbusto) {
+            obstaculo.vista.translationZ = 10f
+            obstaculo.vista.scaleType = ImageView.ScaleType.FIT_XY
+        } else {
+            obstaculo.vista.translationZ = 15f
+            obstaculo.vista.scaleType = ImageView.ScaleType.FIT_CENTER
         }
 
-        obstaculo.vista.y = posicionesY
+        val posicionY = when (tipoElegido){
+            TipoObstaculo.arbusto -> posicionYSuelo
+            else -> posicionYSuelo - alturasVuelo.random()
+        }
+        obstaculo.vista.y = posicionY
 
         val puntos = when (tipoElegido) {
-
-            TipoObstaculo.fruta -> { obstaculo.vista.setImageResource(listaFrutas.random())
+            TipoObstaculo.fruta -> {
+                obstaculo.vista.setImageResource(listaFrutas.random())
                 1
             }
-
-            TipoObstaculo.verdura ->{ obstaculo.vista.setImageResource(listaVerduras.random())
+            TipoObstaculo.verdura ->{
+                obstaculo.vista.setImageResource(listaVerduras.random())
                 2
             }
-
-            TipoObstaculo.dulce -> { obstaculo.vista.setImageResource(listaDulces.random())
+            TipoObstaculo.dulce -> {
+                obstaculo.vista.setImageResource(listaDulces.random())
                 -1
             }
-
             TipoObstaculo.arbusto -> {
                 obstaculo.vista.setImageResource(R.drawable.arbusto)
                 0
@@ -376,20 +353,16 @@ class Juego : AppCompatActivity() {
         }
         obstaculo.puntos = puntos
     }
-    private fun moverObstaculos(){
 
+    private fun moverObstaculos(){
         for (obstaculo in obstaculos){
-            // solo se mueven los activos
             if (obstaculo.activo){
                 obstaculo.vista.x -= velocidadScrollActual
 
                 if(obstaculo.vista.x + obstaculo.vista.width < 0){
-
                     if(obstaculo.tipo == TipoObstaculo.arbusto){
                         obstaculosEvitados++
                     }
-
-                    // desactivar y mandar lejos
                     obstaculo.activo = false
                     obstaculo.vista.visibility = View.INVISIBLE
                     obstaculo.vista.x = -1000f
@@ -397,10 +370,9 @@ class Juego : AppCompatActivity() {
             }
         }
     }
-    private fun hayColision(vista1: ImageView, vista2: ImageView): Boolean {
-        //para que alcance a saltar
-        val margen = 0.15f
 
+    private fun hayColision(vista1: ImageView, vista2: ImageView): Boolean {
+        val margen = 0.20f // Margen un poco mayor para ser más justo
         val x1 = vista1.x + (vista1.width * margen)
         val y1 = vista1.y + (vista1.height * margen)
         val ancho1 = vista1.width * (1 - 2 * margen)
@@ -415,100 +387,71 @@ class Juego : AppCompatActivity() {
                 y1 < y2 + alto2 && y1 + alto1 > y2
     }
 
-    private fun verificarColisiones() {
+    //Verificación eficiente
+    private fun verificarColisiones(){
+        // Recorremos buscando colisión
+        for(obstaculo in obstaculos){
+            // Solo comprobamos si está visible y CERCANO al jugador
+            if (obstaculo.activo &&
+                obstaculo.vista.x < (img.x + img.width + 50) &&
+                obstaculo.vista.x > (img.x - obstaculo.vista.width - 50)) {
 
-        for (obstaculo in obstaculos) {
-
-            if (obstaculo.activo && obstaculo.vista.x < (img.x + img.width) &&
-                obstaculo.vista.x > (img.x - obstaculo.vista.width)) {
-                if (hayColision(img, obstaculo.vista)) {
+                if (hayColision(img, obstaculo.vista)){
                     manejarColision(obstaculo)
+                    // Si el juego acaba, paramos el bucle inmediatamente
                     if (!juegoActivo) break
                 }
             }
         }
     }
-    private fun manejarColision(obstaculo: Obstaculo){
 
+    private fun manejarColision(obstaculo: Obstaculo){
         when (obstaculo.tipo){
             TipoObstaculo.fruta -> {
                 frutasComidas++
                 puntuacion += obstaculo.puntos
-                print("¡Fruta! +${obstaculo.puntos} puntos. Total: $puntuacion")
-
                 actualizarPuntuacion()
-
-                obstaculo.activo = false
-                obstaculo.vista.visibility = View.INVISIBLE
-                obstaculo.vista.x = -1000f
+                desactivarObstaculo(obstaculo)
             }
-
             TipoObstaculo.verdura -> {
                 verdurasComidas++
                 puntuacion += obstaculo.puntos
-                print("¡Verdura! +${obstaculo.puntos} puntos. Total: $puntuacion")
-
                 actualizarPuntuacion()
-
-                obstaculo.activo = false
-                obstaculo.vista.visibility = View.INVISIBLE
-                obstaculo.vista.x = -1000f
+                desactivarObstaculo(obstaculo)
             }
             TipoObstaculo.dulce -> {
                 dulcesComidos++
                 puntuacion += obstaculo.puntos
-
-
                 actualizarPuntuacion()
-
+                desactivarObstaculo(obstaculo)
 
                 if (puntuacion < 0){
                     puntuacion = 0
                     actualizarPuntuacion()
-
-                    obstaculo.activo = false
-                    obstaculo.vista.visibility = View.INVISIBLE
-                    obstaculo.vista.x = -1000f
-
                     detenerJuego()
                     ocultarPanel()
                     temporizadorActivo = false
                     perderVida()
-
-                    if (vidasActuales > 0) {
-                        mostrarDialogoReintentar()
-                    } else {
-                        mostrarDialogoGameOver()
-                    }
-                    return
-
+                    if (vidasActuales > 0) mostrarDialogoReintentar() else mostrarDialogoGameOver()
                 }
-
-                obstaculo.activo = false
-                obstaculo.vista.visibility = View.INVISIBLE
-                obstaculo.vista.x = -1000f
             }
             TipoObstaculo.arbusto -> {
-                obstaculo.activo = false
-                obstaculo.vista.visibility = View.INVISIBLE
-                obstaculo.vista.x = -1000f
-
-
+                desactivarObstaculo(obstaculo)
                 detenerJuego()
                 ocultarPanel()
-
                 temporizadorActivo = false
                 perderVida()
-
-                if (vidasActuales > 0){
-                    mostrarDialogoReintentar()
-                }
-                else {
-                    mostrarDialogoGameOver()
-                }
+                if (vidasActuales > 0) mostrarDialogoReintentar() else mostrarDialogoGameOver()
             }
         }
     }
+
+    private fun desactivarObstaculo(obstaculo: Obstaculo){
+        obstaculo.activo = false
+        obstaculo.vista.visibility = View.INVISIBLE
+        obstaculo.vista.x = -1000f
+    }
+
     private fun mostrarDialogoReintentar(){
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -537,12 +480,10 @@ class Juego : AppCompatActivity() {
         }
         dialog.show()
     }
+
     private fun mostrarDialogoGameOver() {
-
         temporizadorActivo = false
-
         try {
-
             val idJugador = nombreUsuario
             gameDataManager.guardarPartida(
                 idJugador = idJugador,
@@ -555,11 +496,7 @@ class Juego : AppCompatActivity() {
                 dulces = dulcesComidos,
                 obstaculos = obstaculosEvitados,
                 vidas = vidasMaximas - vidasActuales)
-
-            val ruta = gameDataManager.getPartidasPath()
-            android.util.Log.d("Juego", "Partida guardada en carpeta: $ruta")
         } catch (e: Exception) {
-            android.util.Log.e("Juego", "Error guardando partida: ${e.message}")
         }
 
         val dialog = Dialog(this)
@@ -570,7 +507,6 @@ class Juego : AppCompatActivity() {
 
         val btnSalir = dialog.findViewById<Button>(R.id.btnSalirGameOver)
         val txtPuntuacionFinal = dialog.findViewById<TextView>(R.id.txtPuntuacionFinal)
-
         txtPuntuacionFinal?.text = "Puntuación final: $puntuacion"
 
         btnSalir?.setOnClickListener {
@@ -581,51 +517,40 @@ class Juego : AppCompatActivity() {
         }
         dialog.show()
     }
+
     private fun reiniciarRonda() {
         for(obstaculo in obstaculos){
             obstaculo.activo = false
             obstaculo.vista.visibility = View.INVISIBLE
             obstaculo.vista.x = -1000f
         }
-        // Resetear la posición del animal
         img.y = posicionYSuelo
-
         velocidadVertical = 0f
         estaSaltando = false
-
         mostrarPanel()
         temporizadorActivo = true
         iniciarJuego()
-
     }
+
     private fun abandonarPartida() {
         temporizadorActivo  = false
-
         try {
-            val idJugador = nombreUsuario
             gameDataManager.guardarPartida(
-                idJugador = idJugador,
-                alias = nombreUsuario,
-                animal = animalNombre,
-                tiempo = tiempoDeJuego,
-                puntos = puntuacion,
-                frutas = frutasComidas,
-                verduras = verdurasComidas,
-                dulces = dulcesComidos,
-                obstaculos = obstaculosEvitados,
-                vidas = vidasMaximas - vidasActuales
+                idJugador = nombreUsuario, alias = nombreUsuario, animal = animalNombre,
+                tiempo = tiempoDeJuego, puntos = puntuacion, frutas = frutasComidas,
+                verduras = verdurasComidas, dulces = dulcesComidos,
+                obstaculos = obstaculosEvitados, vidas = vidasMaximas - vidasActuales
             )
-            Log.d("Juego", "Partida guardada al abandonar")
-        } catch (e: Exception) {
-            Log.e("Juego", "Error guardando partida: ${e.message}")
-        }
+        } catch (e: Exception) { }
         volverAlInicio()
     }
+
     private fun volverAlInicio() {
         val intent = Intent(this, Inicio::class.java)
         startActivity(intent)
         finish()
     }
+
     private fun actualizarVidas(){
         val imagenVidas = when(vidasActuales){
             3 -> R.drawable.vida_3
@@ -634,60 +559,46 @@ class Juego : AppCompatActivity() {
             0 -> R.drawable.vidas_0
             else -> R.drawable.vidas_0
         }
-
         imgVidas.setImageResource(imagenVidas)
     }
+
     private fun perderVida(){
         vidasActuales--
-
         actualizarVidas()
-
     }
-    private fun moverFondo(){
 
+    private fun moverFondo(){
         val displayMetrics = resources.displayMetrics
         anchoFondo = displayMetrics.widthPixels
 
         fondo1 = ImageView(this)
-        val paramsFondo1 = ConstraintLayout.LayoutParams(
-            anchoFondo,
-            ConstraintLayout.LayoutParams.MATCH_PARENT
-                                                        )
-        paramsFondo1.startToStart = ConstraintLayout.LayoutParams.PARENT_ID
-        paramsFondo1.topToTop = ConstraintLayout.LayoutParams.PARENT_ID
+        // 🚀 FrameLayout params para el fondo
+        val paramsFondo1 = FrameLayout.LayoutParams(anchoFondo, FrameLayout.LayoutParams.MATCH_PARENT)
         fondo1.layoutParams = paramsFondo1
         fondo1.setImageResource(R.drawable.fondo_juego1)
         fondo1.scaleType = ImageView.ScaleType.FIT_XY
         fondo1.x = 0f
 
         fondo2 = ImageView(this)
-        val paramsFondo2 = ConstraintLayout.LayoutParams(
-            anchoFondo,
-            ConstraintLayout.LayoutParams.MATCH_PARENT
-                                                        )
-        paramsFondo2.startToStart = ConstraintLayout.LayoutParams.PARENT_ID
-        paramsFondo2.topToTop = ConstraintLayout.LayoutParams.PARENT_ID
+        val paramsFondo2 = FrameLayout.LayoutParams(anchoFondo, FrameLayout.LayoutParams.MATCH_PARENT)
         fondo2.layoutParams = paramsFondo2
         fondo2.setImageResource(R.drawable.fondo_juego2)
         fondo2.scaleType = ImageView.ScaleType.FIT_XY
         fondo2.x = anchoFondo.toFloat()
 
-        layout.addView(fondo1)
-        layout.addView(fondo2)
+        contenedorJuego.addView(fondo1)
+        contenedorJuego.addView(fondo2)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         detenerJuego()
-
     }
-    fun mostrarSalirJuego(){
 
+    fun mostrarSalirJuego(){
         detenerJuego()
         ocultarPanel()
-
         temporizadorActivo = false
-
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setCancelable(false)
@@ -701,34 +612,25 @@ class Juego : AppCompatActivity() {
             puntuacion = 0
             volverAlInicio()
         }
-
         btnSalirNOJ?.setOnClickListener {
             dialog.dismiss()
-
             mostrarPanel()
             temporizadorActivo = true
             iniciarJuego()
         }
         dialog.show()
     }
+
     private fun actualizarPuntuacion(){
         txtPuntuacion.text = "Puntos\n$puntuacion"
     }
-    private fun mostrarPanel(){
-        panelSuperior.visibility = View.VISIBLE
-    }
-    private fun ocultarPanel(){
-        panelSuperior.visibility = View.GONE
-    }
+    private fun mostrarPanel(){ panelSuperior.visibility = View.VISIBLE }
+    private fun ocultarPanel(){ panelSuperior.visibility = View.GONE }
     private fun iniciarTemporizador() {
         temporizadorActivo = true
         handler.post(temporizadorRunnable)
     }
     private fun reiniciarContadores() {
-        frutasComidas = 0
-        verdurasComidas = 0
-        dulcesComidos = 0
-        obstaculosEvitados = 0
-        tiempoDeJuego = 0
+        frutasComidas = 0; verdurasComidas = 0; dulcesComidos = 0; obstaculosEvitados = 0; tiempoDeJuego = 0
     }
 }
